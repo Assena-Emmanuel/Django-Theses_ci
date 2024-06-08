@@ -1,0 +1,68 @@
+*{
+    font-family: 'Poppin',sans-serif;
+}
+.main{
+    padding-top: 1em;
+}
+
+.image{
+    display: flex;
+    justify-content: center;
+}
+
+.image img{
+    width: 100px;
+}
+
+.titre{
+    font-size: 30px;
+}
+
+.btn-type-research{
+    border-radius: 3px;
+    padding: 13px 9em;
+}
+.btn-type-research:hover{
+    background-color: rgb(224, 223, 223);
+    transition: 0.7s;
+    cursor: pointer;;
+}
+.icone img{
+    width: 50px;
+}
+
+.visibilite{
+    visibility:hidden;
+    position: absolute;
+    top: 4em;
+}
+
+.card_form{
+    border-radius: 0;
+}
+
+.btn-type{
+    border: 1px solid rgb(224, 223, 223);
+    padding: 4px 25px;
+}
+#search-form{
+    position: relative;
+    margin-top: 4em;
+}
+
+
+.line{
+    border-left: 2px solid rgb(224, 223, 223);
+    margin: 0 30px;
+}
+
+
+
+
+
+
+
+
+.footer{
+    margin-top: 12em;
+}

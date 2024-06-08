@@ -1,0 +1,171 @@
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+#searchInput{
+    width: 100%;
+    box-sizing: border-box;
+    padding: 7px;
+    margin-bottom: 8px;
+}
+
+#dropdownList{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+    border: 1px solid #ccc;
+    max-height: 150px;
+    overflow-y: auto;
+    display: none;
+    position: absolute;
+    background-color: white;
+    width: 100%;
+    z-index: 1;
+}
+
+#dropdownList li{
+    padding: 8px;
+    cursor: pointer;
+}
+
+#dropdownList li:hover{
+    background-color: #ddd;
+}
+#resultat{
+    margin: 40px ;
+}
+.these{
+    padding: 10px;
+}
+.these:hover{
+    background-color: #F8F9FA;
+    padding: 10px;
+}
+
+#head {
+    
+width: 100%;
+height: 530px;
+background: linear-gradient(to bottom, rgba(126, 112, 135, 0.6), rgba(30, 31, 92, 0.6)), url('../../../static/theses_ci/images/acceuil.png') no-repeat;
+background-size: cover;
+}
+.main{
+    padding: 5em 0 5em;
+}
+#search-form{
+    position: absolute;
+    top: 25em;
+    left: 59%;
+    transform: translateX(-50%);
+}
+
+i{
+    font-size: 40px;
+    color: #FFF;
+}
+.texte{
+    color: #FFF;
+    font-weight: bold;
+    font-size: 20px;
+}
+#info{
+    margin-top: 10em;
+}
+.nombre{
+    font-size: 45px;
+    font-weight: 900;
+    color: rgb(var(--v-theme-secondary-darken-2));
+}
+.info{
+    height: 200px;
+    min-width: 200px;
+    padding-top: 30px;
+}
+.titre{
+    font-size: 32px;
+}
+#filtre{
+    margin-left: 20px;
+}
+.filtre_icone{
+    font-size: 30px;
+    color: #0E3052;
+}
+.filtre{
+    margin: 10px 0 0 5px;
+    color: #0E3052;
+}
+
+.color{
+    color:#0E3052
+}
+/* filtre element */
+/* Style de base pour le bouton de la liste déroulante */
+.dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+/* Style pour l'icône de la liste déroulante */
+#dropdownIcon {
+    margin-left: 10px;
+}
+
+/* Conteneur pour les options de la liste déroulante */
+.dropdown_filtre {
+    position: relative;
+    display: inline-block;
+    width: 100%; /* Ajuster la largeur si nécessaire */
+}
+
+/* Style des options de la liste déroulante */
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    min-width: 160px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+/* Afficher le contenu de la liste déroulante quand elle est active */
+.dropdown-content.show {
+    display: block;
+    max-height: 200px; /* Ajustez cette valeur selon la hauteur totale du contenu */
+    overflow-y: auto; /* Permet le défilement vertical */
+}
+
+/* Style des éléments de la liste déroulante */
+.dropdown-content label {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+/* Changer la couleur au survol */
+.dropdown-content label:hover {
+    background-color: #f1f1f1;
+}
+
+/* Style pour le champ de saisie de filtre */
+#filterInput {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 16px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+}

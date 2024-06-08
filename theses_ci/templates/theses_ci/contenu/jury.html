@@ -1,0 +1,243 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}"> 
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <title>Document</title>
+    <style>
+        form{
+            margin-top: 6em;
+        }
+
+        .titre{
+            color: #0E3B9C;
+        }
+        #backButton{
+            width: auto;
+            color: #0E3B9C;
+            border: 1px solid #0E3B9C;
+        }
+        #btnSave{
+            margin-top: 5em;
+            color: #A3243E;
+            border:2px solid #A3243E;
+            background-color: #fff;
+            height: 5em;
+            border-radius: 3px;
+            padding: 10px 8em;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        #btnSave:hover{
+            background-color: #A3243E;
+            color: #FFF;
+            transform: 0.4s;
+            
+        }
+        .btnadd{
+            color: #0E3B9C;
+        }
+        .delete-button {
+            margin-left: 10px;
+            cursor: pointer;
+            color: #b44d62;
+            border: none;
+            background-color: #fff;
+        }
+    </style>
+</head>
+<body class="container">
+    
+    <form action="{% url 'theses_ci:these_etape2' %}" method="post" >
+        {% csrf_token %}
+
+        <div class="p-5 m card shadow rounded-0 mb-4">
+        <div class="card  mb-4 border-1 rounded-0">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold titre fw-bold">DIRECTEUR(S)/DIRECTRICE(S) DE THESE</h6>
+            </div>
+        
+            <div class="card-body" id="input-container-directeur">
+                
+                <div class="bg-light card rounded-0 p-2">
+                    <div class="">  
+                        <label for="auteur_nom">Nom et Prénom</label>
+                        {{directeur.dr_nom_prenom}}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-6">
+                            <label for="auteur_nom">Email</label>  
+                            {{directeur.dr_email}}
+                        </div>
+                        <div class="col-md-6 col-sm-6">
+                            <label for="auteur_nom">Université</label>  
+                            <select class="form-control rounded-0 universite_js" name="universite">
+                                {% for universite in universites %}
+                                <option value="">Université...</option>
+                                <option value="{{universite}}">{{universite}}</option>
+                                {% endfor %}
+                            </select>
+                            
+                        </div>
+
+                    </div>
+                </div>   
+                
+            </div>
+            <div class="d-flex container justify-content-end mt-2 mb-3">
+                <button type="button" onclick="addLine()" class="btn btnadd fw-bold rounded-0">+ Ajouter</button>
+            </div>
+            <script>
+                function addLine() {
+                    var form = document.getElementById('input-container-directeur');
+                    var newLine = document.createElement('div');
+                    newLine.classList.add('card', 'p-2', 'bg-light','mt-3', 'rounded-0');
+                    newLine.innerHTML = `
+                        <div class="">  
+                            <label for="auteur_nom">Nom et Prénom</label>
+                            {{directeur.dr_nom_prenom}}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-6">
+                                <label for="auteur_nom">Email</label>  
+                                {{directeur.dr_email}}
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <label for="auteur_nom">Université</label>  
+                                <select class="form-control rounded-0 universite_js" name="universite">
+                                    {% for universite in universites %}
+                                    <option value="">Université...</option>
+                                    <option value="{{universite}}">{{universite}}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                        </div>
+                    `;
+                    form.appendChild(newLine);
+                    // Réinitialiser Select2 sur les nouveaux champs
+                    $('.universite_js').select2();
+                }
+            
+                function deleteLine(button) {
+                    var form = document.getElementById('input-container-directeur');
+                    var line = button.parentElement.parentElement; // Accès au parent du parent
+                    form.removeChild(line);
+                }
+            </script>
+            
+            
+        </div>
+
+        <div class="card  mb-4 border-1 rounded-0">
+            
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold titre fw-bold">MEMBRES DU JURY</h6>
+            </div>
+        
+            <div class="card-body" id="input-container-jury">
+
+                {% for _ in range %}
+                <div class="line mb-4 card rounded-0 p-2 bg-light">
+                    <div class="">  
+                        <label for="auteur_nom">Nom et Prenom</label>
+                        {{membrejury.nom_prenom}}
+                    </div>
+                    <div class="row" id="director-template">
+                        <div id="director-template" class="col-md-6 col-sm-4 "> 
+                            <label for="auteur_nom">Email</label> 
+                            {{membrejury.email}}
+                        </div>
+                        <div id="director-template" class="col-md-4 col-sm-4 ">
+                            <label for="auteur_nom">université</label>  
+                            {{membrejury.universite}}
+                        </div>
+                        <div id="director-template" class="col-md-2 col-sm-4 ">
+                            <label for="auteur_nom">Role</label>  
+                            {{membrejury.role}}
+                        </div>
+                        
+                    </div>
+                </div>
+               
+                {% endfor %} 
+                
+            </div>
+            <div class="d-flex container justify-content-end mt-2 mb-3">
+                <button type="button" onclick="addLineJury()" class="btn btnadd fw-bold rounded-0">+ Ajouter</button>
+            </div>
+            
+            <script>
+                function addLineJury() {
+                    var form = document.getElementById('input-container-jury');
+                    var newLine = document.createElement('div');
+                    newLine.classList.add('line', 'mb-4', 'card', 'rounded-0', 'p-2','bg-light');
+                    newLine.innerHTML = `
+                        <div class="">  
+                            <label for="auteur_nom">Nom et Prenom</label>
+                            {{membrejury.nom_prenom}}
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 col-sm-4"> 
+                                <label for="auteur_nom">Email</label> 
+                                {{membrejury.email}}
+                            </div>
+                            <div class="col-md-4 col-sm-4">
+                                <label for="auteur_nom">université</label>  
+                                {{membrejury.universite}}
+                            </div>
+                            <div class="col-md-2 col-sm-4">
+                                <label for="auteur_nom">Role</label>  
+                                {{membrejury.role}}
+                            </div>
+                            <div class="d-flex container justify-content-end mt-1">
+                                <button class="delete-button bg-light" onclick="deleteLinejury(this)"><i class="fa-solid fa-trash"></i> Supprimer</button>
+                            </div>
+                        </div>
+                    `
+                    form.appendChild(newLine);
+                }
+            
+                function deleteLinejury(button) {
+                    var line = button.parentElement.parentElement.parentElement; // Accès au parent du parent du parent
+                    line.remove();
+                }
+            </script>
+            
+            
+        </div>
+        <div class="d-flex justify-content-start " id="">
+            <a href="{%url 'theses_ci:precedent' %}" id="backButton" class="btn"><i class="fa-solid fa-less-than"></i> Precedent</a>
+        </div>
+        
+    </div>
+
+
+    
+
+
+    <div class="d-flex justify-content-center mb-5" >
+        <button type="submit" id="btnSave">Enregistrer la These</button>
+    </div>
+
+    </form>
+
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
+    <script src="{% static 'theses_ci/js/bootstrap.min.js' %}"></script>
+    
+    
+    <script>
+        // Initialiser Select2 sur le champ auteur
+        $(document).ready(function() {
+            $('.universite_js').select2();
+        });
+    </script>
+
+</body>
+</html>

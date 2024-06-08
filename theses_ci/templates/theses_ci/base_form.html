@@ -1,0 +1,54 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}"> 
+    <link rel="stylesheet" href="{% static 'theses_ci/css/these.css' %}"> 
+    <script src="{% static 'theses_ci/js/bootstrap.js' %}" defer></script>
+    <title>Créer une thèse</title>
+
+    <style>
+        #select {
+    display: block;
+    margin-top: 10px;
+}
+
+option {
+    display: none;
+}
+
+option[selected] {
+    display: block;
+}
+
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        {% block contenu %}
+
+        {% endblock %}
+    </div>
+
+    <script>
+    $(document).ready(function(){
+        $('#search').on('keyup', function(){
+            var searchText = $(this).val().toLowerCase();
+            $('#select option').each(function(){
+                var optionText = $(this).text().toLowerCase();
+                if(optionText.indexOf(searchText) !== -1){
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+        });
+    });
+</script>
+    
+
+</body>
+</html>
