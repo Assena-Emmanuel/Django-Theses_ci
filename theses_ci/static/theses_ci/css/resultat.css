@@ -102,7 +102,7 @@ i{
 }
 
    /* STYLE FILTRE */
-.dropbtn {
+   .dropbtn {
     color: #0E3052;
     font-size: 16px;
     padding: 10px 5px;
@@ -140,7 +140,7 @@ i{
 /* Style des options de la liste déroulante */
 .dropdown-content-filtre {
     display: none;
-    position: absolute;
+    position: relative; /* Change to relative */
     background-color: #f9f9f9;
     width: 100%;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
@@ -172,7 +172,7 @@ i{
 }
 
 /* Style pour le champ de saisie de filtre */
-#filterInput, #filterInput1 {
+#filterInput, #filterInput1, #filterInput2 {
     box-sizing: border-box;
     width: 100%;
     padding: 12px 16px;

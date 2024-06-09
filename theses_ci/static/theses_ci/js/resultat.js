@@ -1,17 +1,20 @@
-// Fonction pour afficher ou masquer le contenu de la liste déroulante
 function toggleDropdown(contentId, iconId) {
     var dropdownContent = document.getElementById(contentId);
     var dropdownIcon = document.getElementById(iconId);
     var searchFiltre = dropdownContent.previousElementSibling;
 
-    if (dropdownContent.style.display === "block" && searchFiltre.style.display === "block") {
+    if (dropdownContent.style.display === "block") {
         dropdownContent.style.display = "none";
-        searchFiltre.style.display = "none";
+        if (searchFiltre && searchFiltre.tagName === 'DIV') {
+            searchFiltre.style.display = "none";
+        }
         dropdownIcon.classList.remove("fa-chevron-up");
         dropdownIcon.classList.add("fa-chevron-down");
         setTimeout(() => dropdownContent.classList.remove("show"), 10); // Pour forcer le recalcul de la mise en page
     } else {
-        searchFiltre.style.display = "block";
+        if (searchFiltre && searchFiltre.tagName === 'DIV') {
+            searchFiltre.style.display = "block";
+        }
         dropdownContent.style.display = "block";
         dropdownIcon.classList.remove("fa-chevron-down");
         dropdownIcon.classList.add("fa-chevron-up");
@@ -19,14 +22,12 @@ function toggleDropdown(contentId, iconId) {
     }
 }
 
-// Fonction pour filtrer les options
 function filterFunction(contentId, inputId) {
-    var input, filter, div, labels, i;
-    input = document.getElementById(inputId);
-    filter = input.value.toUpperCase();
-    div = document.getElementById(contentId);
-    labels = div.getElementsByTagName("label");
-    for (i = 0; i < labels.length; i++) {
+    var input = document.getElementById(inputId);
+    var filter = input.value.toUpperCase();
+    var div = document.getElementById(contentId);
+    var labels = div.getElementsByTagName("label");
+    for (var i = 0; i < labels.length; i++) {
         var txtValue = labels[i].textContent || labels[i].innerText;
         if (txtValue.toUpperCase().indexOf(filter) > -1) {
             labels[i].style.display = "";
@@ -36,7 +37,6 @@ function filterFunction(contentId, inputId) {
     }
 }
 
-// Fonction pour mettre à jour les thèses affichées en fonction des filtres sélectionnés
 function updateTheses() {
     var selectedEtablissements = Array.from(document.querySelectorAll('input[name="etablissement[]"]:checked')).map(cb => cb.value);
     var selectedDomaines = Array.from(document.querySelectorAll('input[name="domaine[]"]:checked')).map(cb => cb.value);
@@ -73,6 +73,3 @@ document.querySelectorAll('input[name="etablissement[]"], input[name="domaine[]"
 document.addEventListener('DOMContentLoaded', function() {
     updateTheses();
 });
-
-
-
