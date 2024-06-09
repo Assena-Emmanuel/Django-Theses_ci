@@ -56,15 +56,15 @@
                 <div class="row container">
                     <div class="col-md-10 dropdown">
                 
-                        <input type="text" id="searchInput" value="" name="mot_cle" class="form-control form-select-sm rounded-0" onkeyup="filterFunction()" placeholder="Rechercher des thèses">
+                        <input type="text" id="searchInputThese" value="" name="mot_cle" class="form-control form-select-sm rounded-0" onkeyup="filterThesesFunction()" placeholder="Rechercher des thèses">
                         <ul id="dropdownList">
                             {% for d in mots_cles %}
                             <li onclick="selectItem(this)">{{d}}</li>
                             {% endfor %}
                         </ul>
                         <script>
-                            function filterFunction() {
-                                const input = document.getElementById('searchInput');
+                            function filterThesesFunction() {
+                                const input = document.getElementById('searchInputThese');
                                 const filter = input.value.toLowerCase();
                                 const ul = document.getElementById('dropdownList');
                                 const li = ul.getElementsByTagName('li');
@@ -82,19 +82,15 @@
                             }
 
                             function selectItem(element) {
-                                const input = document.getElementById('searchInput');
+                                const input = document.getElementById('searchInputThese');
                                 input.value = element.textContent || element.innerText;
                                 const ul = document.getElementById('dropdownList');
                                 ul.style.display = 'none'; // Hide the list
-
-                                // Mettre à jour le champ caché pour soumettre la valeur sélectionnée
-                                // const hiddenInput = document.getElementById('hiddenDomaineInput');
-                                // hiddenInput.value = input.value;
                             }
 
                             // Close the dropdown if the user clicks outside of it
                             window.onclick = function(event) {
-                                if (!event.target.matches('#searchInput')) {
+                                if (!event.target.matches('#searchInputThese')) {
                                     const dropdowns = document.getElementsByClassName('dropdown-content');
                                     for (let i = 0; i < dropdowns.length; i++) {
                                         const openDropdown = dropdowns[i];
@@ -113,10 +109,7 @@
                 </div>
             </div>
         </form>
-        <!-- <div class="d-flex justify-content-center gap-4 mt-4">
-            <div class="btn-type">recherche avancée</div>
-            <div class="btn-type">recherche simple</div>
-        </div> -->
+
     </div>
     <div id="personne-form" class="visibilite">
         <form action="" method="POST" class=" d-flex justify-content-center">
@@ -145,167 +138,131 @@
 </section>
 
 <section id="resultat" style="margin-top: 12em;">
-   
     <div class="row">
         {% if terme %}
         <div class="col-md-3" style="height: auto;">
             <div class="card rounded-0 p-3" id="filtrecard">
-                <div class="d-flex align-items-center " id="filtre">
+                <div class="d-flex align-items-center" id="filtre">
                     <div>
                         <i class="fa-solid fa-filter filtre_icone"></i>
                     </div>
                     <div class="filtre">
                         <h4 class="fw-bold">Filtres</h4>
                     </div>
-                </div> 
-
+                </div>
+        
+                <!-- Filtres des établissements -->
                 <div class="dropdown_filtre">
-                    <button onclick="toggleDropdown()" class="dropbtn">
+                    <button onclick="toggleDropdown('dropdownContent', 'dropdownIcon')" class="dropbtn">
                         Etablissements
                         <i id="dropdownIcon" class="fas fa-chevron-down"></i>
                     </button>
                     <div id="searchfiltre" class="searchfiltre">
-                        <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher...">
+                        <input type="text" id="filterInput" onkeyup="filterFunction('dropdownContent', 'filterInput')" placeholder="Rechercher...">
                     </div>
                     <div id="dropdownContent" class="dropdown-content-filtre">
-                        <!-- <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher..."> -->
-                        {% for etablissement in etablissements%}
-                        <label for="option1">
-                            <input type="checkbox" name="etablissement[]" value="{{etablissement}}">
-                            {{etablissement}}
+                        {% for etablissement in etablissements %}
+                        <label>
+                            <input type="checkbox" name="etablissement[]" value="{{ etablissement }}">
+                            {{ etablissement }}
                         </label>
                         {% endfor %}
-                        
                     </div>
                 </div>
+        
+                <!-- Filtres des domaines -->
                 <div class="dropdown_filtre">
-                    <button onclick="toggleDropdown()" class="dropbtn">
-                        Etablissements
+                    <button onclick="toggleDropdown('dropdownContent1', 'dropdownIcon1')" class="dropbtn">
+                        Domaines
                         <i id="dropdownIcon1" class="fas fa-chevron-down"></i>
                     </button>
                     <div id="searchfiltre1" class="searchfiltre">
-                        <input type="text" id="filterInput1" onkeyup="filterFunction()" placeholder="Rechercher...">
+                        <input type="text" id="filterInput1" onkeyup="filterFunction('dropdownContent1', 'filterInput1')" placeholder="Rechercher...">
                     </div>
                     <div id="dropdownContent1" class="dropdown-content-filtre">
-                        <!-- <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher..."> -->
-                        {% for etablissement in etablissements%}
-                        <label for="option1">
-                            <input type="checkbox" name="etablissement[]" value="{{etablissement}}">
-                            {{etablissement}}
+                        {% for domaine in domaines %}
+                        <label class="gap-3">
+                            <input type="checkbox" name="domaine[]" value="{{ domaine }}">
+                            {{ domaine }}
                         </label>
                         {% endfor %}
-                        
                     </div>
                 </div>
-            
-                <script>
-                    /* Fonction pour afficher ou masquer le contenu de la liste déroulante */
-                    function toggleDropdown() {
-                        var dropdownContent = document.getElementById("dropdownContent");
-                        var dropdownIcon = document.getElementById("dropdownIcon");
-                        var searchfiltre = document.getElementById("searchfiltre");
-            
-                        if (dropdownContent.style.display === "block" && searchfiltre.style.display === "block") {
-                            dropdownContent.style.display = "none";
-                            searchfiltre.style.display = "none"
-                            dropdownIcon.classList.remove("fa-chevron-up");
-                            dropdownIcon.classList.add("fa-chevron-down");
-                            setTimeout(() => dropdownContent.classList.remove("show"), 10); // Pour forcer le recalcul de la mise en page
-                        } else {
-                            searchfiltre.style.display = "block"
-                            dropdownContent.style.display = "block";
-                            dropdownIcon.classList.remove("fa-chevron-down");
-                            dropdownIcon.classList.add("fa-chevron-up");
-                            setTimeout(() => dropdownContent.classList.add("show"), 10); // Pour forcer le recalcul de la mise en page
-                        }
-                    }
-            
-                    /* Fonction pour filtrer les options */
-                    function filterFunction() {
-                        var input, filter, div, labels, i;
-                        input = document.getElementById("filterInput");
-                        filter = input.value.toUpperCase();
-                        div = document.getElementById("dropdownContent");
-                        labels = div.getElementsByTagName("label");
-                        for (i = 0; i < labels.length; i++) {
-                            var txtValue = labels[i].textContent || labels[i].innerText;
-                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                                labels[i].style.display = "";
-                            } else {
-                                labels[i].style.display = "none";
-                            }
-                        }
-                    }
-            
-                </script>
-                
-            </div>
-        </div>
-        <div class="col-md-9">
-            <div class="card rounded-0 me-3 p-3">
-                <h3>La recherche sur <span class="text-primary">"{{terme}}"</span> a retourné <span class="text-primary">{{theses|length}} </span>résultat(s)</h3>
-                {% for these in theses %}
-                    <a href="{% url 'theses_ci:detail' these.id %}" class="nav-link mt-3 these">
-                        <div class="row">
-                            <div class="col-md-10 col-sm-10 col-10">
-                                <div><h2 class="color">{{these.theme}}</h2></div>
-                                <div class="these-content">
-                                    Par <span class="text-primary">{{these.auteur_nom}} {{these.auteur_prenom}}</span> sous la direction de 
-                                    {% for directeur in these.directeur.all %}
-                                        <span class="text-primary">{{ directeur.dr_nom_prenom }} </span>{% if not forloop.last %}, {% endif %}
-                                    {% endfor %} 
-                                    - {{these.domaine.libelle}} - <span class="text-primary institution">{{these.institution.nom}}</span>
-                                </div>
+
+                <!-- Filtres des Specialités -->
+                <div class="dropdown_filtre">
+                    <button onclick="toggleDropdown('dropdownContent2', 'dropdownIcon2')" class="dropbtn">
+                        Spécialités
+                        <i id="dropdownIcon2" class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="searchfiltre2" class="searchfiltre">
+                        <input type="text" id="filterInput2" onkeyup="filterFunction('dropdownContent2', 'filterInput2')" placeholder="Rechercher...">
+                    </div>
+                    <div id="dropdownContent2" class="dropdown-content-filtre">
+                        {% for specialite in specialites %}
+                        <label class="gap-3">
+                            <input type="checkbox" name="specialite[]" value="{{ specialite }}">
+                            {{ specialite }}
+                        </label>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Filtres des Dates -->
+                <div class="dropdown_filtre">
+                    <button onclick="toggleDropdown('dropdownContent3', 'dropdownIcon3')" class="dropbtn">
+                        Date
+                        <i id="dropdownIcon3" class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="dropdownContent3" class="dropdown-content-filtre">
+                        <div class="d-flex">
+                            <div>
+                                <span>de</span>
+                                <input type="number">
                             </div>
-                            <div class="col-md-2 col-sm-2 col-2 d-flex justify-content-end align-items-center color">
-                                {{ these.date_soutenance|date:"Y" }}
+                            <div>
+                                <span>à</span>
+                                <input type="number">
                             </div>
                         </div>
-                    </a>
-                    <br>
-                {% endfor %}
-            
-                <script>
-                    // Fonction pour mettre à jour les thèses affichées en fonction des filtres sélectionnés
-                    function updateTheses() {
-                        var checkboxes = document.querySelectorAll('input[name="etablissement[]"]:checked');
-                        var selectedEtablissements = Array.from(checkboxes).map(function(checkbox) {
-                            return checkbox.value;
-                        });
-            
-                        var theses = document.querySelectorAll('.these');
-                        if (selectedEtablissements.length === 0) {
-                            // Si aucune case à cocher n'est sélectionnée, affichez toutes les thèses
-                            theses.forEach(function(these) {
-                                these.style.display = 'block';
-                            });
-                        } else {
-                            // Filtrez les thèses en fonction des établissements sélectionnés
-                            theses.forEach(function(these) {
-                                var institution = these.querySelector('.institution').innerText.trim();
-                                if (selectedEtablissements.includes(institution)) {
-                                    these.style.display = 'block';
-                                } else {
-                                    these.style.display = 'none';
-                                }
-                            });
-                        }
-                    }
-            
-                    // Ajoutez un gestionnaire d'événements pour les changements de case à cocher
-                    document.querySelectorAll('input[name="etablissement[]"]').forEach(function(checkbox) {
-                        checkbox.addEventListener('change', updateTheses);
-                    });
-            
-                    // Affichez toutes les thèses initialement
-                    document.addEventListener('DOMContentLoaded', function() {
-                        updateTheses();
-                    });
-                </script>
+                    </div>
+                </div>
             </div>
-            {% endif %}
-        </div>   
+        </div>
+        
+        <div class="col-md-9">
+            <div class="card rounded-0 me-3 p-3">
+                <h3>La recherche sur <span class="text-primary">"{{ terme }}"</span> a retourné <span class="text-primary">{{ theses|length }} </span>résultat(s)</h3>
+                {% for these in theses %}
+                <a href="{% url 'theses_ci:detail' these.id %}" class="nav-link mt-3 these">
+                    <div class="row">
+                        <div class="col-md-10 col-sm-10 col-10">
+                            <div><h2 class="color">{{ these.theme }}</h2></div>
+                            <div class="these-content">
+                                Par <span class="text-primary">{{ these.auteur_nom }} {{ these.auteur_prenom }}</span> sous la direction de 
+                                {% for directeur in these.directeur.all %}
+                                <span class="text-primary">{{ directeur.dr_nom_prenom }} </span>{% if not forloop.last %}, {% endif %}
+                                {% endfor %}
+                                - <span class="domaine">{{ these.domaine.libelle }}</span>
+                                - <span class="specialite">{{ these.specialite.libelle }}</span>
+                                - <span class="text-primary institution">{{ these.institution.nom }}</span>
+                            </div>
+                        </div>
+                        <div class="col-md-2 col-sm-2 col-2 d-flex justify-content-end align-items-center color date">
+                            {{ these.date_soutenance|date:"Y" }}
+                        </div>
+                    </div>
+                </a>
+                <br>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
 </section>
+
+
+    
 
 
 
@@ -321,6 +278,7 @@
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="{% static 'theses_ci/js/resultat.js' %}"></script>
 
 
 </body>

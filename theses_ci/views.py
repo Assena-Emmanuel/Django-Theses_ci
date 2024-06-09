@@ -39,11 +39,12 @@ def index(request):
 def resultat(request):
     context = {}
     etablissement = Institutions.objects.all()
-    nb_auteur = len(set(Theses.objects.values_list('auteur_email', flat=True)))
-    nb_directeur = len(set(Directeurs.objects.values_list('dr_email', flat=True)))
-    nb_membrejury = len(set(MembreJury.objects.values_list('email', flat=True)))
+    domaines = Domaines.objects.all()
+    specialites = Specialites.objects.all()
+    dates = Theses.objects.values_list('date_soutenance', flat=True)
     
-    context["personne_liees_aux_theses"] = nb_auteur + nb_directeur + nb_membrejury
+    context["specialites"] = specialites
+    context["domaines"] = domaines
     context["etablissements"] = etablissement
     # Récupérer tous les mots clés de la table These
     mots_cles = Theses.objects.values_list('mot_cle', flat=True)

@@ -101,7 +101,7 @@ i{
     color:#0E3052;
 }
 
-    /* STYLE FILTRE */
+   /* STYLE FILTRE */
 .dropbtn {
     color: #0E3052;
     font-size: 16px;
@@ -115,29 +115,30 @@ i{
     width: 100%;
     font-weight: bold;
 }
-.dropbtn:hover{
+.dropbtn:hover {
     background-color: #D9D9DB;
     color: #FFF;
 }
+
 /* Style pour l'icône de la liste déroulante */
-#dropdownIcon {
+#dropdownIcon, #dropdownIcon1, #dropdownIcon2, #dropdownIcon3 {
     margin-left: 10px;
     font-size: 20px;
     color: #0E3052;
 }
-#dropdownIcon:hover{
+#dropdownIcon:hover, #dropdownIcon1:hover, #dropdownIcon2:hover, #dropdownIcon3:hover {
     color: #fff;
 }
 
 /* Conteneur pour les options de la liste déroulante */
-.dropdown_filtre{
+.dropdown_filtre {
     position: relative;
     display: inline-block;
     width: 100%; /* Ajuster la largeur si nécessaire */
 }
 
 /* Style des options de la liste déroulante */
-.dropdown-content-filtre{
+.dropdown-content-filtre {
     display: none;
     position: absolute;
     background-color: #f9f9f9;
@@ -161,7 +162,8 @@ i{
     color: black;
     padding: 12px 16px;
     text-decoration: none;
-    display: block;
+    display: flex;
+    align-items: center;
 }
 
 /* Changer la couleur au survol */
@@ -170,7 +172,7 @@ i{
 }
 
 /* Style pour le champ de saisie de filtre */
-#filterInput {
+#filterInput, #filterInput1 {
     box-sizing: border-box;
     width: 100%;
     padding: 12px 16px;
@@ -178,4 +180,3 @@ i{
     border: none;
     border-bottom: 1px solid #ddd;
 }
-/* FIN STYLE FILTRE */
