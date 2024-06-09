@@ -16,7 +16,7 @@ class Command(BaseCommand):
 
         # Créer des directeurs
         directeurs = []
-        for _ in range(10):
+        for _ in range(30):
             directeur = Directeurs.objects.create(
                 dr_nom_prenom=fake.name(),
                 dr_email=fake.email(),
@@ -24,35 +24,66 @@ class Command(BaseCommand):
             )
             directeurs.append(directeur)
 
-        # Créer des membres de jury
-        membres_jury = []
-        roles = ["PRESIDENT", "EXAMINATEUR", "RAPPORTEUR"]
-        for _ in range(15):
-            membre = MembreJury.objects.create(
-                nom_prenom=fake.name(),
-                email=fake.unique.email(),
-                role=random.choice(roles),
-                universite=random.choice(institutions)
-            )
-            membres_jury.append(membre)
-
         # Créer des thèses
         for _ in range(20):
             these = Theses.objects.create(
                 auteur_nom=fake.last_name(),
                 auteur_prenom=fake.first_name(),
                 auteur_email=fake.email(),
-                theme=fake.sentence(nb_words=6),
-                resume=fake.text(),
+                theme=fake.sentence(nb_words=15*random.randint(3, 9)),
+                resume=fake.texts(nb_texts=20),
                 domaine=random.choice(domaines),
                 date_soutenance=fake.date_between(start_date='-5y', end_date='today'),
                 specialite=random.choice(specialites),
                 institution=random.choice(institutions),
                 mot_cle=', '.join(fake.words(nb=5))
             )
-            # Ajouter des directeurs et des membres de jury
+            # Ajouter des directeurs
             these.directeur.set(random.sample(directeurs, k=random.randint(1, 3)))
-            these.jury.set(random.sample(membres_jury, k=random.randint(3, 5)))
+            these.save()
+
+            # Créer des membres de jury
+            membres_jury = []
+            roles = ["EXAMINATEUR", "RAPPORTEUR"]
+
+            # Ajouter un président
+            president = MembreJury.objects.create(
+                nom_prenom=fake.name(),
+                email=fake.unique.email(),
+                role="PRESIDENT",
+                universite=random.choice(institutions)
+            )
+            membres_jury.append(president)
+
+            # Ajouter au moins un rapporteur
+            rapporteur = MembreJury.objects.create(
+                nom_prenom=fake.name(),
+                email=fake.unique.email(),
+                role="RAPPORTEUR",
+                universite=random.choice(institutions)
+            )
+            membres_jury.append(rapporteur)
+
+            # Ajouter au moins un examinateur
+            examinateur = MembreJury.objects.create(
+                nom_prenom=fake.name(),
+                email=fake.unique.email(),
+                role="EXAMINATEUR",
+                universite=random.choice(institutions)
+            )
+            membres_jury.append(examinateur)
+
+            # Ajouter d'autres membres
+            for _ in range(random.randint(1, 3)):
+                membre = MembreJury.objects.create(
+                    nom_prenom=fake.name(),
+                    email=fake.unique.email(),
+                    role=random.choice(roles),
+                    universite=random.choice(institutions)
+                )
+                membres_jury.append(membre)
+
+            these.jury.set(membres_jury)
             these.save()
 
         # Message de succès

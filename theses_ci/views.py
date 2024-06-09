@@ -38,13 +38,13 @@ def index(request):
 
 def resultat(request):
     context = {}
-    nb_these = Theses.objects.count()
+    etablissement = Institutions.objects.all()
     nb_auteur = len(set(Theses.objects.values_list('auteur_email', flat=True)))
     nb_directeur = len(set(Directeurs.objects.values_list('dr_email', flat=True)))
     nb_membrejury = len(set(MembreJury.objects.values_list('email', flat=True)))
     
     context["personne_liees_aux_theses"] = nb_auteur + nb_directeur + nb_membrejury
-    context["nb_these"] = nb_these
+    context["etablissements"] = etablissement
     # Récupérer tous les mots clés de la table These
     mots_cles = Theses.objects.values_list('mot_cle', flat=True)
 
@@ -62,11 +62,6 @@ def resultat(request):
         context["terme"] = terme
         theses = Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(mot_cle__icontains=terme)
         context["theses"] = theses
-        
-
-        for test in theses:
-            for d in test.directeur.all():
-                print(f"directeur_________: {d}") 
                                         
 
     return render(request, "theses_ci/contenu/resultat.html", context)

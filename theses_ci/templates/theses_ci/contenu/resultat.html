@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}">
     <link href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="{% static 'theses_ci/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'theses_ci/css/resultat.css' %}">
     <link rel="stylesheet" href="https://fonts.google.com/specimen/Poppins?query=popp">
@@ -15,6 +16,12 @@
     <script src="{% static 'theses_ci/js/base.js' %}" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
     <title>Document</title>
+
+    <style>
+        .searchfiltre{
+            display: none;
+        }
+    </style>
 
 </head>
 <body class=>
@@ -43,7 +50,7 @@
 
 <section id="search-form" class="container">
     <div id="theses-form" class="">
-        <form action="{% url 'theses_ci:index' %}" method="POST" class="">
+        <form action="{% url 'theses_ci:resultat' %}" method="POST" class="">
             {% csrf_token %}
             <div class="card w-75 pb-5 pt-5 rounded-0 bg-light shadow-sm card_form ">
                 <div class="row container">
@@ -140,9 +147,9 @@
 <section id="resultat" style="margin-top: 12em;">
    
     <div class="row">
-        {% if terme%}
-        <div class="col-md-3">
-            <div class="card rounded-0 p-3" >
+        {% if terme %}
+        <div class="col-md-3" style="height: auto;">
+            <div class="card rounded-0 p-3" id="filtrecard">
                 <div class="d-flex align-items-center " id="filtre">
                     <div>
                         <i class="fa-solid fa-filter filtre_icone"></i>
@@ -151,68 +158,153 @@
                         <h4 class="fw-bold">Filtres</h4>
                     </div>
                 </div> 
+
                 <div class="dropdown_filtre">
                     <button onclick="toggleDropdown()" class="dropbtn">
-                        Sélectionner des options
+                        Etablissements
                         <i id="dropdownIcon" class="fas fa-chevron-down"></i>
                     </button>
-                    <div id="dropdownContent" class="dropdown-content">
+                    <div id="searchfiltre" class="searchfiltre">
                         <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher...">
+                    </div>
+                    <div id="dropdownContent" class="dropdown-content-filtre">
+                        <!-- <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher..."> -->
+                        {% for etablissement in etablissements%}
                         <label for="option1">
-                            <input type="checkbox" id="option1" name="options[]" value="option1">
-                            Option 1
+                            <input type="checkbox" name="etablissement[]" value="{{etablissement}}">
+                            {{etablissement}}
                         </label>
-                        <label for="option2">
-                            <input type="checkbox" id="option2" name="options[]" value="option2">
-                            Option 2
-                        </label>
-                        <label for="option3">
-                            <input type="checkbox" id="option3" name="options[]" value="option3">
-                            Option 3
-                        </label>
-                        <label for="option4">
-                            <input type="checkbox" id="option4" name="options[]" value="option4">
-                            Option 4
-                        </label>
+                        {% endfor %}
+                        
                     </div>
                 </div>
+                <div class="dropdown_filtre">
+                    <button onclick="toggleDropdown()" class="dropbtn">
+                        Etablissements
+                        <i id="dropdownIcon1" class="fas fa-chevron-down"></i>
+                    </button>
+                    <div id="searchfiltre1" class="searchfiltre">
+                        <input type="text" id="filterInput1" onkeyup="filterFunction()" placeholder="Rechercher...">
+                    </div>
+                    <div id="dropdownContent1" class="dropdown-content-filtre">
+                        <!-- <input type="text" id="filterInput" onkeyup="filterFunction()" placeholder="Rechercher..."> -->
+                        {% for etablissement in etablissements%}
+                        <label for="option1">
+                            <input type="checkbox" name="etablissement[]" value="{{etablissement}}">
+                            {{etablissement}}
+                        </label>
+                        {% endfor %}
+                        
+                    </div>
+                </div>
+            
+                <script>
+                    /* Fonction pour afficher ou masquer le contenu de la liste déroulante */
+                    function toggleDropdown() {
+                        var dropdownContent = document.getElementById("dropdownContent");
+                        var dropdownIcon = document.getElementById("dropdownIcon");
+                        var searchfiltre = document.getElementById("searchfiltre");
+            
+                        if (dropdownContent.style.display === "block" && searchfiltre.style.display === "block") {
+                            dropdownContent.style.display = "none";
+                            searchfiltre.style.display = "none"
+                            dropdownIcon.classList.remove("fa-chevron-up");
+                            dropdownIcon.classList.add("fa-chevron-down");
+                            setTimeout(() => dropdownContent.classList.remove("show"), 10); // Pour forcer le recalcul de la mise en page
+                        } else {
+                            searchfiltre.style.display = "block"
+                            dropdownContent.style.display = "block";
+                            dropdownIcon.classList.remove("fa-chevron-down");
+                            dropdownIcon.classList.add("fa-chevron-up");
+                            setTimeout(() => dropdownContent.classList.add("show"), 10); // Pour forcer le recalcul de la mise en page
+                        }
+                    }
+            
+                    /* Fonction pour filtrer les options */
+                    function filterFunction() {
+                        var input, filter, div, labels, i;
+                        input = document.getElementById("filterInput");
+                        filter = input.value.toUpperCase();
+                        div = document.getElementById("dropdownContent");
+                        labels = div.getElementsByTagName("label");
+                        for (i = 0; i < labels.length; i++) {
+                            var txtValue = labels[i].textContent || labels[i].innerText;
+                            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                                labels[i].style.display = "";
+                            } else {
+                                labels[i].style.display = "none";
+                            }
+                        }
+                    }
+            
+                </script>
                 
             </div>
         </div>
         <div class="col-md-9">
             <div class="card rounded-0 me-3 p-3">
                 <h3>La recherche sur <span class="text-primary">"{{terme}}"</span> a retourné <span class="text-primary">{{theses|length}} </span>résultat(s)</h3>
-                
-                    {% for these in theses %}
-                        <a href="{% url 'theses_ci:detail' these.id %}" class="nav-link mt-3 these">
-                            
-                            <div class="row">
-                                <div class="col-md-10 col-sm-10 col-10">
-                                    <div><h2 class="color">{{these.theme}}</h2></div>
-                                    <div>
-                                        
-                                        Par <span class="text-primary">{{these.auteur_nom}} {{these.auteur_prenom}}</span>  sous la direction de 
-                                        
-                                        {% for directeur in these.directeur.all %}
+                {% for these in theses %}
+                    <a href="{% url 'theses_ci:detail' these.id %}" class="nav-link mt-3 these">
+                        <div class="row">
+                            <div class="col-md-10 col-sm-10 col-10">
+                                <div><h2 class="color">{{these.theme}}</h2></div>
+                                <div class="these-content">
+                                    Par <span class="text-primary">{{these.auteur_nom}} {{these.auteur_prenom}}</span> sous la direction de 
+                                    {% for directeur in these.directeur.all %}
                                         <span class="text-primary">{{ directeur.dr_nom_prenom }} </span>{% if not forloop.last %}, {% endif %}
-                                        {% endfor %} 
-                                        
-                                        - {{these.domaine.libelle}} - <span class="text-primary">{{these.institution.nom}}</span>
-                                    </div>
-                                </div>
-                                <div class="col-md-2 col-sm-2 col-2 d-flex justify-content-end align-items-center color">
-                                    {{ these.date_soutenance|date:"Y" }}
+                                    {% endfor %} 
+                                    - {{these.domaine.libelle}} - <span class="text-primary institution">{{these.institution.nom}}</span>
                                 </div>
                             </div>
-                            
-                        </a>
-                        <br>
-                    {% endfor %}
-                
+                            <div class="col-md-2 col-sm-2 col-2 d-flex justify-content-end align-items-center color">
+                                {{ these.date_soutenance|date:"Y" }}
+                            </div>
+                        </div>
+                    </a>
+                    <br>
+                {% endfor %}
+            
+                <script>
+                    // Fonction pour mettre à jour les thèses affichées en fonction des filtres sélectionnés
+                    function updateTheses() {
+                        var checkboxes = document.querySelectorAll('input[name="etablissement[]"]:checked');
+                        var selectedEtablissements = Array.from(checkboxes).map(function(checkbox) {
+                            return checkbox.value;
+                        });
+            
+                        var theses = document.querySelectorAll('.these');
+                        if (selectedEtablissements.length === 0) {
+                            // Si aucune case à cocher n'est sélectionnée, affichez toutes les thèses
+                            theses.forEach(function(these) {
+                                these.style.display = 'block';
+                            });
+                        } else {
+                            // Filtrez les thèses en fonction des établissements sélectionnés
+                            theses.forEach(function(these) {
+                                var institution = these.querySelector('.institution').innerText.trim();
+                                if (selectedEtablissements.includes(institution)) {
+                                    these.style.display = 'block';
+                                } else {
+                                    these.style.display = 'none';
+                                }
+                            });
+                        }
+                    }
+            
+                    // Ajoutez un gestionnaire d'événements pour les changements de case à cocher
+                    document.querySelectorAll('input[name="etablissement[]"]').forEach(function(checkbox) {
+                        checkbox.addEventListener('change', updateTheses);
+                    });
+            
+                    // Affichez toutes les thèses initialement
+                    document.addEventListener('DOMContentLoaded', function() {
+                        updateTheses();
+                    });
+                </script>
             </div>
-        </div>
-        {% endif %}
-    </div>
+            {% endif %}
+        </div>   
 </section>
 
 
@@ -225,49 +317,11 @@
 
 
 
+
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
-<script>
-    /* Fonction pour afficher ou masquer le contenu de la liste déroulante */
-    function toggleDropdown() {
-        var dropdownContent = document.getElementById("dropdownContent");
-        var dropdownIcon = document.getElementById("dropdownIcon");
-        alert(dropdownContent.style)
-
-        if (dropdownContent.style.display === "block") {
-            dropdownContent.style.display = "none";
-            dropdownIcon.classList.remove("fa-chevron-up");
-            dropdownIcon.classList.add("fa-chevron-down");
-            setTimeout(() => dropdownContent.classList.remove("show"), 10); // Pour forcer le recalcul de la mise en page
-        } else {
-            dropdownContent.style.display = "block";
-            dropdownIcon.classList.remove("fa-chevron-down");
-            dropdownIcon.classList.add("fa-chevron-up");
-            setTimeout(() => dropdownContent.classList.add("show"), 10); // Pour forcer le recalcul de la mise en page
-        }
-    }
-
-    /* Fonction pour filtrer les options */
-    function filterFunction() {
-        var input, filter, div, labels, i;
-        input = document.getElementById("filterInput");
-        filter = input.value.toUpperCase();
-        div = document.getElementById("dropdownContent");
-        labels = div.getElementsByTagName("label");
-        for (i = 0; i < labels.length; i++) {
-            var txtValue = labels[i].textContent || labels[i].innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                labels[i].style.display = "";
-            } else {
-                labels[i].style.display = "none";
-            }
-        }
-    }
-
-</script>
 
 </body>
 </html>

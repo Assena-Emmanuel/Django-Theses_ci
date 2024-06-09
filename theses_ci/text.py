@@ -1,3 +1,4 @@
-b = ""
-if (not b):
-    print('ok')
+import random
+
+for i in range(5):
+    print(random.randint(1,2))

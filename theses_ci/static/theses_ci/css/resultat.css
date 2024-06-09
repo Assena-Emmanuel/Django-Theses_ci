@@ -98,41 +98,50 @@ i{
 }
 
 .color{
-    color:#0E3052
+    color:#0E3052;
 }
-/* filtre element */
-/* Style de base pour le bouton de la liste déroulante */
+
+    /* STYLE FILTRE */
 .dropbtn {
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px;
+    color: #0E3052;
     font-size: 16px;
+    padding: 10px 5px;
     border: none;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background-color: #FFF;
     width: 100%;
+    font-weight: bold;
 }
-
+.dropbtn:hover{
+    background-color: #D9D9DB;
+    color: #FFF;
+}
 /* Style pour l'icône de la liste déroulante */
 #dropdownIcon {
     margin-left: 10px;
+    font-size: 20px;
+    color: #0E3052;
+}
+#dropdownIcon:hover{
+    color: #fff;
 }
 
 /* Conteneur pour les options de la liste déroulante */
-.dropdown_filtre {
+.dropdown_filtre{
     position: relative;
     display: inline-block;
     width: 100%; /* Ajuster la largeur si nécessaire */
 }
 
 /* Style des options de la liste déroulante */
-.dropdown-content {
+.dropdown-content-filtre{
     display: none;
     position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
+    width: 100%;
     box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
     z-index: 1;
     max-height: 0;
@@ -141,14 +150,14 @@ i{
 }
 
 /* Afficher le contenu de la liste déroulante quand elle est active */
-.dropdown-content.show {
+.dropdown-content-filtre.show {
     display: block;
     max-height: 200px; /* Ajustez cette valeur selon la hauteur totale du contenu */
     overflow-y: auto; /* Permet le défilement vertical */
 }
 
 /* Style des éléments de la liste déroulante */
-.dropdown-content label {
+.dropdown-content-filtre label {
     color: black;
     padding: 12px 16px;
     text-decoration: none;
@@ -156,7 +165,7 @@ i{
 }
 
 /* Changer la couleur au survol */
-.dropdown-content label:hover {
+.dropdown-content-filtre label:hover {
     background-color: #f1f1f1;
 }
 
@@ -169,3 +178,4 @@ i{
     border: none;
     border-bottom: 1px solid #ddd;
 }
+/* FIN STYLE FILTRE */

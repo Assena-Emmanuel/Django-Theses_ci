@@ -76,7 +76,19 @@
                     </div>
                     <div class="card-body" id="input-container">
                         {% for jury in jurys %}
-                            <span class="text-secondary"> <span style="color: #0E3B9C;">{{ jury.role }}</span>  {{ jury.nom_prenom }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} )</span><br>
+                            {% if jury.role|upper == "PRESIDENT"  %}
+                            <span class="text-secondary"> <span style="color: #0E3B9C;">{{ jury.role|upper }}</span>  {{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} )</span><br>
+                            {% elif jury.role|upper == "EXAMINATEUR" %}
+                            <div class="row">
+                                <div class="col-md-3" style="color: #0E3B9C;">EXAMINATEUR</div>
+                                <div class="col-md-9">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                            </div>
+                            {% else %}
+                            <div class="row">
+                                <div class="col-md-3" style="color: #0E3B9C;">RAPPORTEUR(S)</div>
+                                <div class="col-md-9">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                            </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
 
