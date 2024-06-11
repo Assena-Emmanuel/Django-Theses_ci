@@ -131,13 +131,13 @@
     </div>
 </section>
 
-<section id="lien" class="p-3">
+<section id="lien" class="ps-5" style="margin-top: 10em;">
     <div class="d-flex">
-        <span><a href="{% url 'theses_ci:index' %}">acceuil</a> / Resultat(s)</span>
+        <span style="font-size: 25px;"><a href="{% url 'theses_ci:index' %}">acceuil</a> / Resultat(s)</span>
     </div>
 </section>
 
-<section id="resultat" style="margin-top: 12em;">
+<section id="resultat" style="margin-top: 1em;">
     <div class="row">
         {% if terme %}
         <div class="col-md-3" style="height: auto;">
@@ -158,7 +158,7 @@
                         <i id="dropdownIcon" class="fas fa-chevron-down"></i>
                     </button>
                     <div id="searchfiltre" class="searchfiltre">
-                        <input type="text" id="filterInput" onkeyup="filterFunction('dropdownContent', 'filterInput')" placeholder="Rechercher...">
+                        <input class="form-control rounded-0" type="text" id="filterInput" onkeyup="filterFunction('dropdownContent', 'filterInput')" placeholder="Rechercher...">
                     </div>
                     <div id="dropdownContent" class="dropdown-content-filtre">
                         {% for etablissement in etablissements %}
@@ -177,7 +177,7 @@
                         <i id="dropdownIcon1" class="fas fa-chevron-down"></i>
                     </button>
                     <div id="searchfiltre1" class="searchfiltre">
-                        <input type="text" id="filterInput1" onkeyup="filterFunction('dropdownContent1', 'filterInput1')" placeholder="Rechercher...">
+                        <input class="form-control rounded-0" type="text" id="filterInput1" onkeyup="filterFunction('dropdownContent1', 'filterInput1')" placeholder="Rechercher...">
                     </div>
                     <div id="dropdownContent1" class="dropdown-content-filtre">
                         {% for domaine in domaines %}
@@ -196,7 +196,7 @@
                         <i id="dropdownIcon2" class="fas fa-chevron-down"></i>
                     </button>
                     <div id="searchfiltre2" class="searchfiltre">
-                        <input type="text" id="filterInput2" onkeyup="filterFunction('dropdownContent2', 'filterInput2')" placeholder="Rechercher...">
+                        <input class="form-control rounded-0" type="text" id="filterInput2" onkeyup="filterFunction('dropdownContent2', 'filterInput2')" placeholder="Rechercher...">
                     </div>
                     <div id="dropdownContent2" class="dropdown-content-filtre">
                         {% for specialite in specialites %}
@@ -214,19 +214,68 @@
                         Date
                         <i id="dropdownIcon3" class="fas fa-chevron-down"></i>
                     </button>
-                    <div id="dropdownContent3" class="dropdown-content-filtre">
-                        <div class="d-flex">
-                            <div>
+                    <div id="searchfiltre2" class="searchfiltre">
+                        <div class="d-flex justify-content-center gap-3" style="padding: 10px 10px;">
+                            <div class="w-100">
                                 <span>de</span>
-                                <input type="number">
+                                <input type="number" placeholder="AAAA" id="datedebut" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance">
                             </div>
-                            <div>
+                            <div class="w-100">
                                 <span>à</span>
-                                <input type="number">
+                                <input type="number" placeholder="AAAA" id="datefin" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance">
                             </div>
                         </div>
                     </div>
+
+                    <div id="dropdownContent3" class="dropdown-content-filtre-date">
+                        <div id="yearList"></div>
+                    </div>
+
+                    <script>
+                    document.addEventListener('click', function(e) {
+                        if (!e.target.matches('.datesoutenance') && !e.target.closest('.dropdown-content-filtre-date')) {
+                            var dropdowns = document.getElementsByClassName('dropdown-content-filtre-date');
+                            for (var i = 0; i < dropdowns.length; i++) {
+                                var openDropdown = dropdowns[i];
+                                if (openDropdown.classList.contains('show')) {
+                                    openDropdown.classList.remove('show');
+                                }
+                            }
+                        }
+                    });
+                
+                    function createYearList() {
+                        var yearList = document.getElementById('yearList');
+                        for (var year = 1990; year <= 2099; year++) {
+                            var yearItem = document.createElement('div');
+                            yearItem.textContent = year;
+                            yearItem.style.cursor = 'pointer';
+                            yearItem.addEventListener('click', function() {
+                                var yearInput = document.activeElement;
+                                if (yearInput.tagName === 'INPUT' && yearInput.classList.contains('datesoutenance')) {
+                                    yearInput.value = this.textContent;
+                                }
+                                document.getElementById('dropdownContent3').classList.remove('show');
+                            });
+                            yearList.appendChild(yearItem);
+                        }
+                    }
+                
+                    document.addEventListener('DOMContentLoaded', function() {
+                        createYearList();
+                    });
+                
+                    var dateInputs = document.getElementsByClassName('datesoutenance');
+                    for (var i = 0; i < dateInputs.length; i++) {
+                        dateInputs[i].addEventListener('focus', toggleDropdown);
+                    }
+                </script>
                 </div>
+
+
+
+
+
             </div>
         </div>
         

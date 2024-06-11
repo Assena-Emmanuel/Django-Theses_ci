@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}"> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{% static 'theses_ci/css/these.css' %}"> 
+    <link rel="stylesheet" href="{% static 'theses_ci/css/style.css' %}"> 
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     
     <title>Créer une thèse</title>
@@ -67,12 +67,36 @@
             color: #0E3B9C;
             border: 1px solid #0E3B9C;
         }
+        #form{
+            margin-top: 3em;
+        }
+        #head {
+            
+            width: 100%;
+            height: 530px;
+            background: linear-gradient(to bottom, rgba(126, 112, 135, 0.6), rgba(30, 31, 92, 0.6)), url('../../../static/theses_ci/images/acceuil.png') no-repeat;
+            background-size: cover;
+            }
+            .main{
+                padding: 5em 0 5em;
+            }
       
     </style>
 </head>
-<body class="container">
-    <h1>Créer une nouvelle thèse</h1>
+<body >
+    <section id="head">
+        <div class="main">
     
+            <div class="image" style="padding-top: -20px;">
+                <img src="{% static 'theses_ci/images/logo.png' %}" alt="">
+            </div>
+            <h1 class="text-center mt-4 text-light titre">Le moteur de recherche des thèses Ivoirien</h1>
+           
+        </div>
+    </section>
+    
+    <section id="form" class="container">
+        <h1 class="text-center pb-3 fw-bold display-3">Ajouter une Thèse <span class="text-primary">1/2</span> </h1>
     <form action="{% url 'theses_ci:these_etape1' %}" method="post" class="p-5 card shadow rounded-0">
         {% csrf_token %}
 
@@ -147,8 +171,8 @@
                                 ul.style.display = 'none'; // Hide the list
 
                                 // Mettre à jour le champ caché pour soumettre la valeur sélectionnée
-                                const hiddenInput = document.getElementById('hiddenDomaineInput');
-                                hiddenInput.value = input.value;
+                                // const hiddenInput = document.getElementById('hiddenDomaineInput');
+                                // hiddenInput.value = input.value;
                             }
 
                             // Close the dropdown if the user clicks outside of it
@@ -170,8 +194,8 @@
                 </div>
                 <div id="" class="w-100 mb-3 dropdown">  
                     <label for="">Spécialité</label>
-                    <input type="hidden" id="hiddenSpecialiteInput" name="specialite" value="">
-                    <input type="text" id="searchInput1" value="{% if specialite_saisie %}{{specialite_saisie}} {% endif %}" name="specialite" class="form-control form-select-sm rounded-0" onkeyup="filterFunction1()" placeholder="Spécialité">
+                    
+                    <input type="text" id="searchInput1" value="{% if specialite_saisie %}{{specialite_saisie}} {% endif %}" name="specialite" class="form-control rounded-0" onkeyup="filterFunction1()" placeholder="Spécialité">
                     <ul id="dropdownList1">
                         {% for s in specialites %}
                         <li onclick="selectItem1(this)">{{s}}</li>
@@ -204,8 +228,8 @@
                             ul.style.display = 'none'; // Hide the list
 
                             // Mettre à jour le champ caché pour soumettre la valeur sélectionnée
-                            const hiddenInput = document.getElementById('hiddenSpecialiteInput');
-                            hiddenInput.value = input.value;
+                            // const hiddenInput = document.getElementById('hiddenSpecialiteInput');
+                            // hiddenInput.value = input.value;
                         }
 
                         // Close the dropdown if the user clicks outside of it
@@ -246,9 +270,8 @@
                 <div id="" class="mb-3 dropdown w-100">  
                     <label for="">Université</label>
                     {{these.institution}}
-                    <input type="hidden" id="hiddenUniversiteInput" name="universite" value="">
                     <input type="text" id="searchInput2" value="{% if universite_saise %}{{universite_saise}} {% endif %}" name="universite" class="form-control form-select-sm rounded-0" onkeyup="filterFunction2()" placeholder="Université">
-                    <ul id="dropdownList2">
+                    <ul id="dropdownList2" class="w-100">
                         {% for u in universite %}
                         <li onclick="selectItem2(this)">{{u}}</li>
                         {% endfor %}
@@ -307,13 +330,16 @@
 
     </form>
  
+</section>
 
 
-
-    <div class="container footer m-5">
-        {% include 'theses_ci/footer.html'%}
+<div class=" bg-light footer">
+    <div class="container">
+        <div class="container p-4">
+            {% include 'theses_ci/footer.html'%}
+        </div>
     </div>
-
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js" defer></script>
     <script src="{% static 'theses_ci/js/bootstrap.js' %}" defer></script>

@@ -41,8 +41,17 @@ def resultat(request):
     etablissement = Institutions.objects.all()
     domaines = Domaines.objects.all()
     specialites = Specialites.objects.all()
-    dates = Theses.objects.values_list('date_soutenance', flat=True)
+
+    # Extraire les dates de soutenance
+    dates = list(Theses.objects.values_list('date_soutenance', flat=True))
     
+    # Extraire les années des dates
+    annees = list(set([date.year for date in dates if date is not None]))
+
+    print([i for i in range(min(annees), max(annees)+1, 3)])
+    context["dates"] = range(min(annees), max(annees)+1, 3)
+    context["date_min"] = min(annees)
+    context["date_max"] = max(annees)
     context["specialites"] = specialites
     context["domaines"] = domaines
     context["etablissements"] = etablissement
@@ -85,13 +94,12 @@ def succes(request):
     return render(request, 'theses_ci/contenu/succes.html')
 
 # retourne la valeur non nulle dans une liste de deux valeurs
-def non_null(liste):
-    if len(liste)==2:
-        if liste[0] != liste[-1]:
-            nonnul =list(filter(lambda x: x != '', liste))
-            return ''.join(nonnul)
-        else:
-            return liste[0]
+def non_null(listes):
+    new = []
+    for liste in listes:
+        if liste != '' and liste not in new:
+            new.append(liste)
+    return new[0]
 
 def these_etape1(request):
     d = Domaines.objects.all()
@@ -99,8 +107,13 @@ def these_etape1(request):
     univ =Institutions.objects.all()
 
     if request.method == 'POST':
+        # print(f"_ ____ ___ ___ s: {request.session['etape1_saisie']}")
+        # if request.session['etape1_saisie']:
+            
+
         these_form = ThesesForm(request.POST)
         
+
         if these_form.is_valid():
             request.session['etape1'] = request.POST
             sess = dict(request.session.get('etape1'))
@@ -111,9 +124,7 @@ def these_etape1(request):
                 'universite': non_null(sess['universite']),
             }
 
-            print(f"ok etape 1--> {request.POST.get('domaine')}")
-            r = dict(request.session.get('etape1'))
-            print(f"-----> session: {r}")
+            print(f"<<<<: {dict(request.session.get('etape1_saisie'))}")
             return redirect('theses_ci:these_etape2')
     
         else:
@@ -132,7 +143,8 @@ def these_etape1(request):
     return render(request, 'theses_ci/contenu/create_these.html', context)
 
 def precedent(request):
-    these_form = ThesesForm(initial=request.session.get('etape1', {}))
+  
+    these_form = ThesesForm(initial=request.session.get('etape1_saisie', {}))
     d = Domaines.objects.all()
     specialite = Specialites.objects.all()
     univ =Institutions.objects.all()
@@ -164,8 +176,18 @@ def these_etape2(request):
     if request.method == 'POST':
         membrejury_form = MembrejuryForm(request.POST)
         directeur_form = DirecteurForm(request.POST)
+        infos = dict(request.POST)
         
-        if  membrejury_form.is_valid() and directeur_form.is_valid():
+        directeur_noms = infos['dr_nom_prenom']
+        directeur_emails = infos['dr_email']
+        directeur_universite = infos['dr_universite[]']
+
+        jury_nom_prenom = infos['nom_prenom']
+        jury_email = infos['email']
+        jury_universite = infos['universite[]']
+        jury_roles = infos['role']
+        
+        if  len(jury_universite)!= 0 and len(directeur_universite) != 0:
             
             session = dict(request.session.get('etape1'))
             session_valeur = dict(request.session.get('etape1_saisie'))
@@ -173,11 +195,13 @@ def these_etape2(request):
             # verification de l'existance  
             domaine, _ = Domaines.objects.get_or_create(libelle=session_valeur['domaine'])
             specialite, _ = Specialites.objects.get_or_create(libelle=session_valeur['specialite'])
+            print(f"______ session inst: {session_valeur['universite']}")
             universite, _ = Institutions.objects.get_or_create(nom=session_valeur['universite'])
 
+            print(f"_______ 1")
 
-            
-            these, created = Theses.objects.get_or_create(
+            # Enregistrer la these
+            these, _ = Theses.objects.get_or_create(
                 theme=session['theme'],
                 defaults={
                     'auteur_nom': session['auteur_nom'],
@@ -193,55 +217,46 @@ def these_etape2(request):
             )
 
 
-            # Ajouter les membres du jury 
-            donnees_etape2 = dict(request.POST)
-
+            print(f"_______ 2")
             # Enregistrer le(s) directeur(s) de these
-            nombre_docteur = len(donnees_etape2['dr_nom_prenom'])
+            nombre_docteur = len(directeur_universite)
             directeurs = []
             for i in range(nombre_docteur):
-                universite = Institutions.objects.get(pk=donnees_etape2['dr_universite'][i])
-                directeur = Directeurs.objects.get_or_create(dr_nom_prenom = donnees_etape2['dr_nom_prenom'][i],dr_email=donnees_etape2['dr_email'][i],dr_universite=universite) 
+                universite = Institutions.objects.get(pk=directeur_universite[i])
+                directeur, _ = Directeurs.objects.get_or_create(dr_nom_prenom = directeur_noms[i],dr_email=directeur_emails[i],dr_universite=universite) 
                 directeurs.append(directeur)
 
-            # directeur_save =  Directeurs.objects.bulk_create(directeurs)
-
+            print(f"_______ 3")
             # Enregistrer le jury
-            nombre_jury = len(donnees_etape2['nom_prenom'])
+            nombre_jury = len(jury_universite)
             membreJurys = []
             for i in range(nombre_jury):
-                universite = Institutions.objects.get(pk=donnees_etape2['universite'][i])
-                jury = MembreJury.objects.get_or_create(nom_prenom = donnees_etape2['nom_prenom'][i],email=donnees_etape2['email'][i],role=donnees_etape2['role'][i],universite=universite) 
-                jury.save()  # Enregistrer d'abord le membre du jury pour obtenir un ID
+                universite = Institutions.objects.get(pk=jury_universite[i])
+                jury, _ = MembreJury.objects.get_or_create(nom_prenom = jury_nom_prenom[i],email=jury_email[i],role=jury_roles[i],universite=universite) 
                 membreJurys.append(jury)
 
-            # membrejury_save =  MembreJury.objects.bulk_create(membreJurys)
-
             # lier directeur et les membre du jury a la these
-            
+            print(f"_______ 2 {directeurs[0].id}")
             these.directeur.add(*directeurs)
             these.jury.add(*membreJurys)
 
-            print("----> icic")
+            # Suppression des variables de session
+            if 'etape1' in request.session:
+                del request.session['etape1']
+
+            if 'etape2' in request.session:
+                del request.session['etape2']
+     
             # rediriger sur une autre page avec un message
-            messages.success(request, "Thèse ajoutée avec succès !")
-            return render(request, "theses_ci/contenu/succes.html")
+            return render(request, "theses_ci/contenu/succes.html", {"message":"Thèse ajoutée avec succès !"})
             
 
 
         else:
-            print(f"---->: {directeur_form.errors}")
-            print(f"---->: {membrejury_form.errors}")
+            print(f"Quelque chose c'est male passée")
     else:
-        if request.session.get('etape2'):
-            context['session'] = dict(request.session.get('etape2'))
-            d = dict(request.session.get('etape2'))
-
-        if 'etape2' in request.session:
-            del request.session['etape2']
-
-        membrejury_form = MembrejuryForm(initial=request.session.get('etape2', {}))
-        directeur_form = DirecteurForm(initial=request.session.get('etape2', {}))
+        membrejury_form = MembrejuryForm()
+        directeur_form = DirecteurForm()
 
     context.update({
         'membrejury': membrejury_form,

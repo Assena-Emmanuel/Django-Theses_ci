@@ -1,13 +1,26 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}">
+    <link rel="stylesheet" href="{% static 'theses_ci/css/style.css' %}">
     <title>Document</title>
 </head>
 <body>
-    {% for message in messages %}
-        {{ messages.message }}
-    {% endfor %}
+    <section id="head">
+        <div class="main">
+    
+            <div class="image" style="padding-top: 10px;">
+                <img src="{% static 'theses_ci/images/logo.png' %}" alt="">
+            </div>
+        </div>
+    </section>
+    <section class="mt-5 container">
+        <div class="alert alert-success text-center">
+            <span>{{message}}</span>
+        </div>
+    </section>
 </body>
 </html>

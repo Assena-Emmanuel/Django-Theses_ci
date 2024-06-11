@@ -1,0 +1,40 @@
+/*  */
+#form{
+    margin-top: 3em;
+}
+
+.titre{
+    color: #0E3B9C;
+}
+#backButton{
+    width: auto;
+    color: #0E3B9C;
+    border: 1px solid #0E3B9C;
+}
+#btnSave{
+    margin-top: 5em;
+    color: #0E3B9C;
+    border:2px solid #0E3B9C;
+    background-color: #fff;
+    height: 5em;
+    border-radius: 3px;
+    padding: 10px 8em;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+#btnSave:hover{
+    background-color: #0E3B9C;
+    color: #FFF;
+    transform: 0.4s;
+    
+}
+.btnadd{
+    color: #0E3B9C;
+}
+.delete-button {
+    margin-left: 10px;
+    cursor: pointer;
+    color: #b44d62;
+    border: none;
+    background-color: #fff;
+}
