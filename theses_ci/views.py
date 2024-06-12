@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from .forms import ThesesForm , DirecteurForm, MembrejuryForm 
 from .models import Domaines, Specialites, Institutions, Theses, Directeurs, MembreJury
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.db.models import Count
 from django.db.models.functions import ExtractYear
 
@@ -38,9 +39,15 @@ def index(request):
     # Récupérer le nombre de thèses par année
     theses_par_annee = Theses.objects.values('date_soutenance').annotate(count=Count('id')).order_by('date_soutenance')
     context['theses_par_annee'] = theses_par_annee
-     
+    
+    # Personne liées aux theses
+    tous_personnes = []
+    auteurs = list(set([auteur.nom_complet_auteur() for auteur in list(Theses.objects.all())]))
+    directeurs = Directeurs.objects.all()
+    directeurs = Directeurs.objects.all()
 
     return render(request, "theses_ci/contenu/index.html", context)
+
 
 def resultat(request):
     context = {}
@@ -54,19 +61,20 @@ def resultat(request):
     # Extraire les années des dates
     annees = list(set([date.year for date in dates if date is not None]))
 
-    context["dates"] = range(min(annees), max(annees)+1, 3)
+    context["dates"] = range(min(annees), max(annees) + 1, 3)
     context["date_min"] = min(annees)
     context["date_max"] = max(annees)
     context["specialites"] = specialites
     context["domaines"] = domaines
     context["etablissements"] = etablissement
-    # Récupérer tous les mots clés de la table These
-    terme_recherche =[]
+
+    # Récupérer tous les mots clés de la table Theses
+    terme_recherche = []
     mots_cles = Theses.objects.values_list('mot_cle', flat=True)
     domaines = list(set(list(Domaines.objects.values_list('libelle', flat=True))))
     specialites = list(set(list(Specialites.objects.values_list('libelle', flat=True))))
 
-    # decouper tous les mots clés par la virgule
+    # Découper tous les mots clés par la virgule
     tous_mots_cles = []
     for mc in mots_cles:
         if mc:
@@ -75,48 +83,57 @@ def resultat(request):
     terme_recherche.extend(domaines)
     terme_recherche.extend(specialites)
     terme_recherche.extend(mots_cles)
+
     # Enlever les éventuels espaces et nettoyer les mots clés
     context["mots_cles"] = terme_recherche
+
+    list_theses = []
+    if request.method == 'GET':
+        if request.GET.get('all') == "*":
+            context["terme"] = request.GET.get('all')
+            theses = Theses.objects.all()
+            list_theses.extend(theses)
+    
+            # Pagination
+            paginator = Paginator(list_theses, 10)  # 10 thèses par page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            context['nb'] = theses.count() 
+            context['page_obj'] = page_obj
+    
+            return render(request, "theses_ci/contenu/resultat.html", context)
+        else:
+            return redirect('index')
     
     if request.method == "POST":
-        list_theses = []
         terme = request.POST["mot_cle"]
         context["terme"] = terme
-        # Effectuer la recherche sur les mots clés, les domaines et les specialitées
-        domaine_theses = list(Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(domaine__libelle__contains=terme))
-        specialite_theses = list(Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(specialite__libelle__contains=terme))
         theses = Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(mot_cle__icontains=terme)
-        
-        # Regrouper tous les resultats en un seul resultats
-        list_theses.extend(domaine_theses)
-        list_theses.extend(specialite_theses)
-        list_theses.extend(theses)
 
-        context["theses"] = list_theses
-                                        
-
-    return render(request, "theses_ci/contenu/resultat.html", context)
-
-
-def resultat_all(request, all):
-    context = {}
-    
-    if request.GET[all] == "*":
-        list_theses = []
-        # Effectuer la recherche sur les mots clés, les domaines et les specialitées
+        # Effectuer la recherche sur les mots clés, les domaines et les spécialités
         domaine_theses = list(Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(domaine__libelle__contains=terme))
         specialite_theses = list(Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').filter(specialite__libelle__contains=terme))
-        theses = Theses.objects.select_related('domaine', 'specialite', 'institution').prefetch_related('directeur').all()
-        
-        # Regrouper tous les resultats en un seul resultats
+    
+        # Regrouper tous les résultats en un seul résultat
         list_theses.extend(domaine_theses)
         list_theses.extend(specialite_theses)
         list_theses.extend(theses)
 
-        context["theses"] = list_theses
-                                        
+        # Pagination
+        paginator = Paginator(list_theses, 10)  # 10 thèses par page
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
+
+        context['nb'] = len(list_theses)
+        context['page_obj'] = page_obj
+
+    
 
     return render(request, "theses_ci/contenu/resultat.html", context)
+
+
+
+
 
 
 

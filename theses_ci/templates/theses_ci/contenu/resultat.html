@@ -150,7 +150,8 @@
                         <h4 class="fw-bold">Filtres</h4>
                     </div>
                 </div>
-        
+                
+                {% if page_obj|length != 0 %} 
                 <!-- Filtres des établissements -->
                 <div class="dropdown_filtre">
                     <button onclick="toggleDropdown('dropdownContent', 'dropdownIcon')" class="dropbtn">
@@ -272,7 +273,7 @@
                 </script>
                 </div>
 
-
+                {% endif %} 
 
 
 
@@ -281,13 +282,58 @@
         
         <div class="col-md-9">
             <div class="card rounded-0 me-3 p-3">
-                <h3>La recherche sur <span class="text-primary">"{{ terme }}"</span> a retourné <span class="text-primary">{{ theses|length }} </span>résultat(s)</h3>
-                {% for these in theses %}
+                <div class="row mb-3 mt-2" style="padding: 0 0 3em 3em;">
+                    <div class="col-md-6">
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page=1" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                            <span class="sr-only">Premiere</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Precedente</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+            
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">
+                                        Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    </a>
+                                </li>
+            
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Suivante</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                            <span class="sr-only">Derniere</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                       
+                    </div>
+                </div>
+
+                <h3>La recherche sur <span class="text-primary">"{{ terme }}"</span> a retourné <span class="text-primary">{{ nb }} </span>résultat(s)</h3>
+                {% for these in page_obj %}
                 <a href="{% url 'theses_ci:detail' these.id %}" class="nav-link mt-3 these">
                     <div class="row">
                         <div class="col-md-10 col-sm-10 col-10">
-                            <div><h2 class="color">{{ these.theme }}</h2></div>
-                            <div class="these-content">
+                            <div class="color" style="font-size: 18px;">{{ these.theme }}</div>
+                            <div class="these-content fw-bold" style="font-size: 15px;">
                                 Par <span class="text-primary">{{ these.auteur_nom }} {{ these.auteur_prenom }}</span> sous la direction de 
                                 {% for directeur in these.directeur.all %}
                                 <span class="text-primary">{{ directeur.dr_nom_prenom }} </span>{% if not forloop.last %}, {% endif %}
@@ -304,16 +350,56 @@
                 </a>
                 <br>
                 {% endfor %}
+
+                <div class="d-flex justify-content-center" style="margin-top: 3em;">
+                    <div>
+                        <nav aria-label="Page navigation example">
+                            <ul class="pagination">
+                                {% if page_obj.has_previous %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page=1" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                            <span class="sr-only">Premiere</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.previous_page_number }}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                            <span class="sr-only">Precedente</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+            
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#">
+                                        Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}
+                                    </a>
+                                </li>
+            
+                                {% if page_obj.has_next %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.next_page_number }}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                            <span class="sr-only">Suivante</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="?all=*&page={{ page_obj.paginator.num_pages }}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                            <span class="sr-only">Derniere</span>
+                                        </a>
+                                    </li>
+                                {% endif %}
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
             </div>
+            
         </div>
         {% endif %}
     </div>
 </section>
-
-
-    
-
-
 
 <div class="footer bg-light">
     <div class="container p-4">
@@ -321,13 +407,16 @@
     </div>
 </div>
 
-
-
-
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{% static 'theses_ci/js/resultat.js' %}"></script>
+<!-- <script> -->
+    <!-- Lorsque la sélection de la liste déroulante change -->
+    <!-- $('#perPage').change(function() {
+        // Soumettre automatiquement le formulaire
+        $('#perPageForm').submit();
+    }); -->
+<!-- </script> -->
 
 
 </body>

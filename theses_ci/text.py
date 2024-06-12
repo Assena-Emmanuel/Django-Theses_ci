@@ -1,6 +1,5 @@
-l1 = []
+a = 2
+if a== 2:
+    b= 3
 
-l2 = [1, 2]
-l3 = ["a", "b"]
-l1.extend([l1, l3])
-print(f"2: {l1}")
+print(b)

@@ -62,6 +62,9 @@ class Theses(models.Model):
     jury = models.ManyToManyField(MembreJury)
     mot_cle = models.TextField()
 
+    def nom_complet_auteur(self):
+        return f"{self.auteur_prenom} {self.auteur_nom}"
+
     def __str__(self):
         return self.theme
     

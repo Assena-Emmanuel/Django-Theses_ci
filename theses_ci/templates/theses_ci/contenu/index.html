@@ -10,10 +10,8 @@
     <link rel="stylesheet" href="{% static 'theses_ci/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'theses_ci/css/these.css' %}">
     <link rel="stylesheet" href="https://fonts.google.com/specimen/Poppins?query=popp">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{% static 'theses_ci/js/bootstrap.min.js' %}" defer></script>
-    <script src="{% static 'theses_ci/js/base.js' %}" defer></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    
     <title>Document</title>
 
     <style>
@@ -22,14 +20,14 @@
             display: inline-block;
         }
 
-        #searchInput{
+        #searchInput, #searchInputperson{
             width: 100%;
             box-sizing: border-box;
             padding: 7px;
             margin-bottom: 8px;
         }
 
-        #dropdownList{
+        #dropdownList, #dropdownListPerson{
             list-style-type: none;
             padding: 0;
             margin: 0;
@@ -43,12 +41,12 @@
             z-index: 1;
         }
 
-        #dropdownList li{
+        #dropdownList li, #dropdownListPerson li{
             padding: 8px;
             cursor: pointer;
         }
 
-        #dropdownList li:hover{
+        #dropdownList li:hover, #dropdownListPerson li:hover{
             background-color: #ddd;
         }
         #resultat{
@@ -77,7 +75,7 @@
         #search-form{
             position: absolute;
             top: 25em;
-            left: 59%;
+            left: 57%;
             transform: translateX(-50%);
         }
 
@@ -134,24 +132,83 @@
 </section>
 
 <section id="search-form" class="container">
-    <div id="theses-form" class="">
+    <div id="theses-form" class="" style="width: 100%;">
         <form action="{% url 'theses_ci:resultat' %}" method="POST" class="">
             {% csrf_token %}
             <div class="card w-75 pb-5 pt-5 rounded-0 bg-light shadow-sm card_form ">
                 <div class="row container">
                     <div class="col-md-10 dropdown">
                 
-                        <input type="text" id="searchInput" value="" name="mot_cle" class="form-control form-select-sm rounded-0" onkeyup="filterFunction()" placeholder="Rechercher des thèses">
-                        <ul id="dropdownList">
+                        <input type="text" id="searchInput" onblur="hideDropdown()" value="" name="mot_cle" class="form-control form-select-sm rounded-0" onkeyup="filterFunction()" placeholder="Rechercher des thèses">
+                        <ul id="dropdownList" class="">
                             {% for d in mots_cles %}
                             <li onclick="selectItem(this)">{{d}}</li>
                             {% endfor %}
                         </ul>
                         <script>
                             function filterFunction() {
-                                const input = document.getElementById('searchInput');
+                            const input = document.getElementById('searchInput');
+                            const filter = input.value.toLowerCase();
+                            const ul = document.getElementById('dropdownList');
+                            const li = ul.getElementsByTagName('li');
+
+                            ul.style.display = 'block'; // Show the list
+
+                            for (let i = 0; i < li.length; i++) {
+                                const txtValue = li[i].textContent || li[i].innerText;
+                                if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                                    li[i].style.display = '';
+                                } else {
+                                    li[i].style.display = 'none';
+                                }
+                            }
+
+                            // Cacher la liste si aucun élément ne correspond à la saisie
+                            if (filter === '') {
+                                ul.style.display = 'none';
+                            }
+                        }
+
+                        function selectItem(element) {
+                            const input = document.getElementById('searchInput');
+                            input.value = element.textContent || element.innerText;
+                            const ul = document.getElementById('dropdownList');
+                            ul.style.display = 'none'; // Hide the list
+                        }
+
+                        function hideDropdown() {
+                            const ul = document.getElementById('dropdownList');
+                            ul.style.display = 'none'; // Hide the list
+                        }
+                        </script>
+
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-warning w-100">Rechercher</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+    </div>
+    <div id="personne-form" class="visibilite w-100" style="position: absolute;">
+        <form action="" method="POST" class=" d-flex justify-content-start">
+            {% csrf_token %}
+            <div class="card w-75 pb-5 pt-5 rounded-0 bg-light shadow-sm card_form ">
+                <div class="row container">
+                    <div class="col-md-10 dropdown">
+                
+                        <input type="text" id="searchInputperson" value="" name="nom" class="form-control form-select-sm rounded-0" onkeyup="filterFunctionPerson()" placeholder="Rechercher des personnes par nom">
+                        <ul id="dropdownListPerson">
+                            {% for d in mots_cles %}
+                            <li onclick="selectItemperson(this)">{{d}}</li>
+                            {% endfor %}
+                        </ul>
+                        <script>
+                            function filterFunctionPerson() {
+                                const input = document.getElementById('searchInputperson');
                                 const filter = input.value.toLowerCase();
-                                const ul = document.getElementById('dropdownList');
+                                const ul = document.getElementById('dropdownListPerson');
                                 const li = ul.getElementsByTagName('li');
 
                                 ul.style.display = 'block'; // Show the list
@@ -166,20 +223,16 @@
                                 }
                             }
 
-                            function selectItem(element) {
-                                const input = document.getElementById('searchInput');
+                            function selectItemperson(element) {
+                                const input = document.getElementById('searchInputperson');
                                 input.value = element.textContent || element.innerText;
-                                const ul = document.getElementById('dropdownList');
+                                const ul = document.getElementById('dropdownListPerson');
                                 ul.style.display = 'none'; // Hide the list
-
-                                // Mettre à jour le champ caché pour soumettre la valeur sélectionnée
-                                // const hiddenInput = document.getElementById('hiddenDomaineInput');
-                                // hiddenInput.value = input.value;
                             }
 
                             // Close the dropdown if the user clicks outside of it
                             window.onclick = function(event) {
-                                if (!event.target.matches('#searchInput')) {
+                                if (!event.target.matches('#searchInputperson')) {
                                     const dropdowns = document.getElementsByClassName('dropdown-content');
                                     for (let i = 0; i < dropdowns.length; i++) {
                                         const openDropdown = dropdowns[i];
@@ -198,28 +251,7 @@
                 </div>
             </div>
         </form>
-        <!-- <div class="d-flex justify-content-center gap-4 mt-4">
-            <div class="btn-type">recherche avancée</div>
-            <div class="btn-type">recherche simple</div>
-        </div> -->
-    </div>
-    <div id="personne-form" class="visibilite">
-        <form action="" method="POST" class=" d-flex justify-content-center">
-            <div class="card w-75 pb-5 pt-5 round-0 card_form ">
-                <div class="row container">
-                    <div class="col-md-8">
-                        <input class="form-control" type="text" name="key_word" required placeholder="Nom personne">
-                    </div>
-                    <div class="col-md-4">
-                        <button type="submit" class="btn btn-warning w-100">Rechercher</button>
-                    </div>
-                </div>
-            </div>
-        </form>
-        <!-- <div class="d-flex justify-content-center gap-4 mt-4">
-            <div class="btn-type">recherche avancée</div>
-            <div class="btn-type">recherche simple</div>
-        </div> -->
+ 
     </div>
 </section>
 
@@ -274,7 +306,7 @@
 <section id="info" class="">
     <div class="container">
         <div class="d-flex justify-content-center  gap-5">
-            <a href="{% url 'theses_ci:resultat_all' '*' %}" >
+            <a href="{% url 'theses_ci:resultat' %}?all=*" >
                 <div class="info bg-light text-center rounded-2 shadow ">
                     
                     <div><span class="nombre" style="color: #1F9AE4;">{{nb_these}}</span></div>
@@ -302,8 +334,11 @@
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'theses_ci/js/bootstrap.min.js' %}"></script>
+<script src="{% static 'theses_ci/js/base.js' %}"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 
 </body>
