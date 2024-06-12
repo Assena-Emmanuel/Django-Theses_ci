@@ -11,4 +11,5 @@ urlpatterns = [
     path('ajoute_these/precedent', views.precedent, name='precedent'),
     path('ajoute_these/succes', views.succes, name='succes'),
     path('resultat/', views.resultat, name='resultat'),
+    path('resultat/<str:all>', views.resultat_all, name='resultat_all'),
 ]

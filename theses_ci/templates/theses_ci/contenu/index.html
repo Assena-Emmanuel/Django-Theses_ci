@@ -61,7 +61,9 @@
             background-color: #F8F9FA;
             padding: 10px;
         }
-        
+        a{
+            text-decoration: none;
+        }
         #head {
             
         width: 100%;
@@ -272,14 +274,21 @@
 <section id="info" class="">
     <div class="container">
         <div class="d-flex justify-content-center  gap-5">
-            <div class="info bg-light text-center shadow ">
-                <div><span class="nombre" style="color: #1F9AE4;">{{nb_these}}</span></div>
-                <span class="fw-bold">Thèses publiès</span>
-            </div>
-            <div class="info bg-light text-center rounded-2 shadow">
-                <div><span class="nombre" style="color: #1F9AE4;">{{personne_liees_aux_theses}}</span></div>
-                <span class="fw-bold">Personnes liées <br> aux Thèses</span>
-            </div>
+            <a href="{% url 'theses_ci:resultat_all' '*' %}" >
+                <div class="info bg-light text-center rounded-2 shadow ">
+                    
+                    <div><span class="nombre" style="color: #1F9AE4;">{{nb_these}}</span></div>
+                    <span class="fw-bold text-dark">Thèses publiès</span><br>
+                    <div class="mt-3"><span class="text-primary ">EXPLORER</span></div>
+                </div>
+            </a>
+            <a href="" >
+                <div class="info bg-light text-center rounded-2 shadow">
+                    <div><span class="nombre" style="color: #1F9AE4;">{{personne_liees_aux_theses}}</span></div>
+                    <span class="fw-bold text-dark">Personnes liées <br> aux Thèses</span><br>
+                    <div class="mt-3"><span class="text-primary ">EXPLORER</span></div>
+                </div>
+            </a>
         </div>
     </div>
 </section>
