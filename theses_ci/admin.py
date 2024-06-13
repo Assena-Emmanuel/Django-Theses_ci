@@ -24,7 +24,7 @@ class InstitutionsAdmin(admin.ModelAdmin):
 
 @admin.register(Theses)
 class ThesesAdmin(admin.ModelAdmin):
-    list_display = ['auteur_nom','auteur_prenom','theme', 'resume', 'mot_cle', 'specialite', 'domaine',]
+    list_display = ['auteur_nom','auteur_prenom','theme', 'resume', 'mot_cle', 'specialite', 'domaine','fichier']
     list_filter = ['date_soutenance', 'specialite', 'domaine', 'institution', 'domaine']
     search_fields = ['theme', 'auteur_nom', 'auteur_prenom', 'universite__nom']
 

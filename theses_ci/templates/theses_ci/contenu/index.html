@@ -123,15 +123,15 @@
             <div class="icone"><i class="fa-sharp fa-solid fa-graduation-cap"></i></div>
             <div class="texte">LES THÈSES</div>
         </div>
-        <div class="line"></div>
+        <!-- <div class="line"></div>
         <div class="btn-type-research text-center d-flex align-items-center gap-3" id="btn-person-search">
             <div class="icone"><i class="fa-solid fa-users text-light"></i></div>
             <div class="texte">LES PERSONNES <br><small style="font-weight: 500;">liées au thèses</small></div>
-        </div>
+        </div> -->
     </div>
 </section>
 
-<section id="search-form" class="container">
+<section id="search-form" class="container" style="margin-top: 4.5em;">
     <div id="theses-form" class="" style="width: 100%;">
         <form action="{% url 'theses_ci:resultat' %}" method="POST" class="">
             {% csrf_token %}
@@ -191,7 +191,7 @@
         </form>
 
     </div>
-    <div id="personne-form" class="visibilite w-100" style="position: absolute;">
+    <!-- <div id="personne-form" class="visibilite w-100" style="position: absolute;">
         <form action="" method="POST" class=" d-flex justify-content-start">
             {% csrf_token %}
             <div class="card w-75 pb-5 pt-5 rounded-0 bg-light shadow-sm card_form ">
@@ -252,7 +252,7 @@
             </div>
         </form>
  
-    </div>
+    </div> -->
 </section>
 
 
@@ -311,13 +311,6 @@
                     
                     <div><span class="nombre" style="color: #1F9AE4;">{{nb_these}}</span></div>
                     <span class="fw-bold text-dark">Thèses publiès</span><br>
-                    <div class="mt-3"><span class="text-primary ">EXPLORER</span></div>
-                </div>
-            </a>
-            <a href="" >
-                <div class="info bg-light text-center rounded-2 shadow">
-                    <div><span class="nombre" style="color: #1F9AE4;">{{personne_liees_aux_theses}}</span></div>
-                    <span class="fw-bold text-dark">Personnes liées <br> aux Thèses</span><br>
                     <div class="mt-3"><span class="text-primary ">EXPLORER</span></div>
                 </div>
             </a>

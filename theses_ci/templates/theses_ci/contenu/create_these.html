@@ -97,7 +97,7 @@
     
     <section id="form" class="container">
         <h1 class="text-center pb-3 fw-bold display-3">Ajouter une Thèse <span class="text-primary">1/2</span> </h1>
-    <form action="{% url 'theses_ci:these_etape1' %}" method="post" class="p-5 card shadow rounded-0">
+    <form action="{% url 'theses_ci:these_etape1' %}" method="post" enctype="multipart/form-data" class="p-5 card shadow rounded-0">
         {% csrf_token %}
 
         <div class="card  mb-4 border-1 rounded-0">
@@ -254,6 +254,10 @@
                 <div id="director-template" class=" mb-3">  
                     <label for="auteur_nom">Resumé</label>
                     {{these.resume}}
+                </div>
+                <div id="director-template" class=" mb-3">  
+                    <label for="">Support numérique</label>
+                    {{these.fichier}}
                 </div>
                 <div  id="mot_cle">
                     <div id="director-template" class="mb-3">  

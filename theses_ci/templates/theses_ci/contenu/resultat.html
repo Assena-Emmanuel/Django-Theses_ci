@@ -21,6 +21,31 @@
         .searchfiltre{
             display: none;
         }
+        .dropdown-content-filtre-date {
+            display: none;
+            position: relative; /* Change to relative */
+            background-color: #f9f9f9;
+            width: 100%;
+            /* box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2); */
+            z-index: 1;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .dropdown-content-filtre-date div {
+            padding: 12px 16px;
+        }
+
+        .datesoutenance {
+            width: 100px;
+        }
+
+        .dropdown-content-filtre-date.show {
+            display: block;
+            max-height: 200px; /* Ajustez cette valeur selon la hauteur totale du contenu */
+            overflow-y: auto; /* Permet le défilement vertical */
+        }
     </style>
 
 </head>
@@ -40,15 +65,15 @@
             <div class="icone"><i class="fa-sharp fa-solid fa-graduation-cap"></i></div>
             <div class="texte">LES THÈSES</div>
         </div>
-        <div class="line"></div>
+        <!-- <div class="line"></div>
         <div class="btn-type-research text-center d-flex align-items-center gap-3" id="btn-person-search">
             <div class="icone"><i class="fa-solid fa-users text-light"></i></div>
             <div class="texte">LES PERSONNES <br><small style="font-weight: 500;">liées au thèses</small></div>
-        </div>
+        </div> -->
     </div>
 </section>
 
-<section id="search-form" class="container">
+<section id="search-form" class="container" style="margin-top: 4.5em;">
     <div id="theses-form" class="">
         <form action="{% url 'theses_ci:resultat' %}" method="POST" class="">
             {% csrf_token %}
@@ -111,7 +136,7 @@
         </form>
 
     </div>
-    <div id="personne-form" class="visibilite">
+    <!-- <div id="personne-form" class="visibilite">
         <form action="" method="POST" class=" d-flex justify-content-center">
             <div class="card w-75 pb-5 pt-5 round-0 card_form ">
                 <div class="row container">
@@ -124,11 +149,8 @@
                 </div>
             </div>
         </form>
-        <!-- <div class="d-flex justify-content-center gap-4 mt-4">
-            <div class="btn-type">recherche avancée</div>
-            <div class="btn-type">recherche simple</div>
-        </div> -->
-    </div>
+        
+    </div> -->
 </section>
 
 <section id="lien" class="ps-5" style="margin-top: 10em;">
@@ -210,44 +232,45 @@
                 </div>
 
                 <!-- Filtres des Dates -->
-                <div class="dropdown_filtre">
-                    <button onclick="toggleDropdown('dropdownContent3', 'dropdownIcon3')" class="dropbtn">
+                <!-- <div class="dropdown_filtre">
+                    <button onclick="toggleDropdownDate('searchfiltre3', 'dropdownIcon3')" class="dropbtn">
                         Date
                         <i id="dropdownIcon3" class="fas fa-chevron-down"></i>
                     </button>
-                    <div id="searchfiltre2" class="searchfiltre">
+                    <div id="searchfiltre3" class="searchfiltre">
                         <div class="d-flex justify-content-center gap-3" style="padding: 10px 10px;">
                             <div class="w-100">
                                 <span>de</span>
-                                <input type="number" placeholder="AAAA" id="datedebut" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance">
+                                <input type="number" oninput="filterYearList()" onblur="hideDropdown()" placeholder="AAAA" id="datedebut" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance w-100">
                             </div>
                             <div class="w-100">
                                 <span>à</span>
-                                <input type="number" placeholder="AAAA" id="datefin" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance">
+                                <input type="number" oninput="filterYearList()" placeholder="AAAA" id="datefin" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance w-100">
                             </div>
                         </div>
+                        <div>
+                            <button type="button btn-primary">Rechercher</button>
+                        </div>
+                    
                     </div>
-
-                    <div id="dropdownContent3" class="dropdown-content-filtre-date">
-                        <div id="yearList"></div>
-                    </div>
-
-                    <script>
-                    document.addEventListener('click', function(e) {
-                        if (!e.target.matches('.datesoutenance') && !e.target.closest('.dropdown-content-filtre-date')) {
-                            var dropdowns = document.getElementsByClassName('dropdown-content-filtre-date');
-                            for (var i = 0; i < dropdowns.length; i++) {
-                                var openDropdown = dropdowns[i];
-                                if (openDropdown.classList.contains('show')) {
-                                    openDropdown.classList.remove('show');
-                                }
-                            }
-                        }
-                    });
+                    
+                </div> -->
+                
+                <!-- <script>
+                    function hideDropdown() {
+                        const div = document.getElementById('dropdownContent3');
+                        div.style.display = 'none'; 
+                    }
+                
+                    function toggleDropdownDate() {
+                        document.getElementById('dropdownContent3').classList.toggle('show');
+                    }
+                
+                    
                 
                     function createYearList() {
                         var yearList = document.getElementById('yearList');
-                        for (var year = 1990; year <= 2099; year++) {
+                        for (var year = 1900; year <= 2099; year++) {
                             var yearItem = document.createElement('div');
                             yearItem.textContent = year;
                             yearItem.style.cursor = 'pointer';
@@ -262,16 +285,13 @@
                         }
                     }
                 
-                    document.addEventListener('DOMContentLoaded', function() {
-                        createYearList();
-                    });
+                    
                 
-                    var dateInputs = document.getElementsByClassName('datesoutenance');
-                    for (var i = 0; i < dateInputs.length; i++) {
-                        dateInputs[i].addEventListener('focus', toggleDropdown);
-                    }
-                </script>
-                </div>
+                    
+                </script> -->
+                
+                
+                
 
                 {% endif %} 
 

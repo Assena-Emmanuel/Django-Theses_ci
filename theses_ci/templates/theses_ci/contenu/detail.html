@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{% static 'theses_ci/css/bootstrap.css' %}">
     <link rel="stylesheet" href="{% static 'theses_ci/css/style.css' %}">
     <link rel="stylesheet" href="{% static 'theses_ci/css/these.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css"/>
     <link rel="stylesheet" href="https://fonts.google.com/specimen/Poppins?query=popp">
     <script src="{% static 'theses_ci/js/bootstrap.js' %}" defer></script>
     <script src="{% static 'theses_ci/js/base.js' %}" defer></script>
@@ -28,6 +29,9 @@
         }
         .titre{
             color: #0E3B9C;
+        }
+        a{
+            text-decoration: none;
         }
     </style>
 </head>
@@ -75,21 +79,43 @@
                         <h6 class="m-0 font-weight-bold titre fw-bold">JURY</h6>
                     </div>
                     <div class="card-body" id="input-container">
-                        {% for jury in jurys %}
-                            {% if jury.role|upper == "PRESIDENT"  %}
-                            <span class="text-secondary"> <span style="color: #0E3B9C;">{{ jury.role|upper }}</span>  {{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} )</span><br>
-                            {% elif jury.role|upper == "EXAMINATEUR" %}
+
                             <div class="row">
-                                <div class="col-md-3" style="color: #0E3B9C;">EXAMINATEUR</div>
-                                <div class="col-md-9">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                                <div class="col-md-5" style="color: #0E3B9C;">PRESIDENT/PRESENTE</div>
+                                <div class="col-md-7">
+                                    {% for jury in jurys %}
+                                        {% if jury.role|upper == "PRESIDENT"%}
+                                        <div class="">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} )</span><br></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% else %}
-                            <div class="row">
-                                <div class="col-md-3" style="color: #0E3B9C;">RAPPORTEUR(S)</div>
-                                <div class="col-md-9">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                            <div class="row mt-3">
+                                <hr>
+                                <div class="col-md-5" style="color: #0E3B9C;">EXAMINATEUR</div>
+                                <div class="col-md-7">
+                                    {% for jury in jurys %}
+                                        {% if jury.role|upper == "EXAMINATEUR"%}
+                                        <div class="">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
                             </div>
-                            {% endif %}
-                        {% endfor %}
+                           
+                            <div class="row mt-3">
+                                <hr>
+                                <div class="col-md-5" style="color: #0E3B9C;">RAPPORTEUR(S)/RAPPORTEUSE(S)</div>
+                                <div class="col-md-7">
+                                    {% for jury in jurys %}
+                                        {% if jury.role|upper == "RAPPORTEUR"%}
+                                        <div class="">{{ jury.nom_prenom|title }} <span class="text-dark fw-bold"> - </span> ( {{ jury.universite.nom }} ) <br></div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                                
+                            </div>
+                            
+                        
                     </div>
 
                 </div>
@@ -110,7 +136,20 @@
                 {{theses.resume}}
             </p>
         </div>
+        {% if theses.fichier  %}
+        <a class="btn btn-success" href="{% url 'theses_ci:telecharger' %}?path={{ theses.fichier.url }}">Télécharger la thèse <i class="fa-solid fa-download"></i></a>
+
+            <!-- <div>
+                
+                <embed type="application/pdf" src="C:/xampp/htdocs/ProjetMaster1/Master1/media/theses/intro_R.pdf" />
+
+            </div> -->
+
+        {% else %}
+
         {% endif %}
+        {% endif %}
+       
 
     </div>
 </section>

@@ -43,6 +43,7 @@ class ThesesForm(forms.ModelForm):
             "specialite":forms.Select(attrs={"class":"form-select form-select-sm rounded-0", }),
             # "domaine":forms.Select(attrs={"class":"form-select form-select-sm rounded-0", }),
             "institution": forms.Select(attrs={"class": "form-control form-select-sm rounded-0"}),
+            "fichier": forms.FileInput(attrs={'class': 'form-control', 'accept': '.pdf, .doc, .docx',  }),
         }
 
 

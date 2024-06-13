@@ -1,10 +1,13 @@
-from django.shortcuts import render, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import ThesesForm , DirecteurForm, MembrejuryForm 
 from .models import Domaines, Specialites, Institutions, Theses, Directeurs, MembreJury
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count
 from django.db.models.functions import ExtractYear
+from .utils import handle_uploaded_file
+import os
+from django.conf import settings
 
     
   
@@ -40,11 +43,6 @@ def index(request):
     theses_par_annee = Theses.objects.values('date_soutenance').annotate(count=Count('id')).order_by('date_soutenance')
     context['theses_par_annee'] = theses_par_annee
     
-    # Personne liées aux theses
-    tous_personnes = []
-    auteurs = list(set([auteur.nom_complet_auteur() for auteur in list(Theses.objects.all())]))
-    directeurs = Directeurs.objects.all()
-    directeurs = Directeurs.objects.all()
 
     return render(request, "theses_ci/contenu/index.html", context)
 
@@ -143,9 +141,10 @@ def detail(request, these_id):
     directeurs = theses.directeur.all()
     jurys = theses.jury.all()
     mots_cles = theses.mot_cle.split(',')
-    print("-----------------",mots_cles)
+    fichier = '/'.join(theses.fichier.url.split('/')[-2:])
 
-    return render(request, 'theses_ci/contenu/detail.html',{'theses':theses, 'directeurs':directeurs, 'jurys':jurys, 'mots_cles':mots_cles})
+
+    return render(request, 'theses_ci/contenu/detail.html',{'theses':theses, 'directeurs':directeurs, 'jurys':jurys, 'mots_cles':mots_cles, 'fichier':fichier})
 
 
 
@@ -166,24 +165,29 @@ def these_etape1(request):
     univ =Institutions.objects.all()
 
     if request.method == 'POST':
-        # print(f"_ ____ ___ ___ s: {request.session['etape1_saisie']}")
-        # if request.session['etape1_saisie']:
+
             
 
-        these_form = ThesesForm(request.POST)
+        these_form = ThesesForm(request.POST, request.FILES)
         
 
         if these_form.is_valid():
+             # Sauvegarde du fichier et récupération du chemin
+            uploaded_file = request.FILES['fichier']
+            file_path = handle_uploaded_file(uploaded_file)
+
+            # Sauvegarde du chemin dans la session
+            request.session['file_path'] = file_path
             request.session['etape1'] = request.POST
+
+
             sess = dict(request.session.get('etape1'))
-            print(f"<<<<: {sess['domaine']}")
             request.session['etape1_saisie'] = {
                 'domaine': non_null(sess['domaine']),
                 'specialite': non_null(sess['specialite']),
                 'universite': non_null(sess['universite']),
             }
 
-            print(f"<<<<: {dict(request.session.get('etape1_saisie'))}")
             return redirect('theses_ci:these_etape2')
     
         else:
@@ -209,7 +213,6 @@ def precedent(request):
     univ =Institutions.objects.all()
 
     session_valeur = dict(request.session.get('etape1_saisie'))
-    print(f"->: {session_valeur}")
     
 
     d_saisie = session_valeur['domaine']
@@ -249,15 +252,15 @@ def these_etape2(request):
         if  len(jury_universite)!= 0 and len(directeur_universite) != 0:
             
             session = dict(request.session.get('etape1'))
+            session_file = request.session.get('file_path')
             session_valeur = dict(request.session.get('etape1_saisie'))
 
             # verification de l'existance  
             domaine, _ = Domaines.objects.get_or_create(libelle=session_valeur['domaine'])
             specialite, _ = Specialites.objects.get_or_create(libelle=session_valeur['specialite'])
-            print(f"______ session inst: {session_valeur['universite']}")
             universite, _ = Institutions.objects.get_or_create(nom=session_valeur['universite'])
 
-            print(f"_______ 1")
+    
 
             # Enregistrer la these
             these, _ = Theses.objects.get_or_create(
@@ -272,11 +275,12 @@ def these_etape2(request):
                     'specialite': specialite,
                     'institution': universite,
                     'mot_cle': session['mot_cle'],
+                    'fichier': session_file
                 }
             )
 
 
-            print(f"_______ 2")
+  
             # Enregistrer le(s) directeur(s) de these
             nombre_docteur = len(directeur_universite)
             directeurs = []
@@ -285,7 +289,7 @@ def these_etape2(request):
                 directeur, _ = Directeurs.objects.get_or_create(dr_nom_prenom = directeur_noms[i],dr_email=directeur_emails[i],dr_universite=universite) 
                 directeurs.append(directeur)
 
-            print(f"_______ 3")
+
             # Enregistrer le jury
             nombre_jury = len(jury_universite)
             membreJurys = []
@@ -295,7 +299,7 @@ def these_etape2(request):
                 membreJurys.append(jury)
 
             # lier directeur et les membre du jury a la these
-            print(f"_______ 2 {directeurs[0].id}")
+
             these.directeur.add(*directeurs)
             these.jury.add(*membreJurys)
 
@@ -305,6 +309,9 @@ def these_etape2(request):
 
             if 'etape2' in request.session:
                 del request.session['etape2']
+
+            if 'file_path' in request.session:
+                del request.session['file_path']
      
             # rediriger sur une autre page avec un message
             return render(request, "theses_ci/contenu/succes.html", {"message":"Thèse ajoutée avec succès !"})
@@ -323,3 +330,15 @@ def these_etape2(request):
         'range': range(3),
     })
     return render(request, 'theses_ci/contenu/jury.html', context)
+
+
+
+def telecharger(request):
+    file_path = os.path.join(settings.MEDIA_ROOT, request.GET.get("path", ""))
+    file_path = "/".join("media".join(file_path.split("media")[1:]).split("/"))[1:]
+    if os.path.exists(file_path):
+        with open(file_path, 'rb') as fh:
+            response = HttpResponse(fh.read(), content_type="application/vnd.ms-excel")
+            response['Content-Disposition'] = 'inline; filename=' + os.path.basename(file_path)
+            return response
+    return HttpResponse(404)

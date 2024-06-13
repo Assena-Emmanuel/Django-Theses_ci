@@ -61,6 +61,7 @@ class Theses(models.Model):
     directeur = models.ManyToManyField(Directeurs)
     jury = models.ManyToManyField(MembreJury)
     mot_cle = models.TextField()
+    fichier = models.FileField(upload_to='theses/', blank=True, null=True)
 
     def nom_complet_auteur(self):
         return f"{self.auteur_prenom} {self.auteur_nom}"

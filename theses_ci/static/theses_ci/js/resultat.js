@@ -1,3 +1,27 @@
+function toggleDropdownDate(contentId, iconId) {
+    var dropdownContent = document.getElementById(contentId);
+    var dropdownIcon = document.getElementById(iconId);
+    var searchFiltre = dropdownContent.previousElementSibling;
+
+    if (dropdownContent.style.display === "block") {
+        dropdownContent.style.display = "none";
+        if (searchFiltre && searchFiltre.tagName === 'DIV') {
+            searchFiltre.style.display = "none";
+        }
+        dropdownIcon.classList.remove("fa-chevron-up");
+        dropdownIcon.classList.add("fa-chevron-down");
+        setTimeout(() => dropdownContent.classList.remove("show"), 10); // Pour forcer le recalcul de la mise en page
+    } else {
+        if (searchFiltre && searchFiltre.tagName === 'DIV') {
+            searchFiltre.style.display = "block";
+        }
+        dropdownContent.style.display = "block";
+        dropdownIcon.classList.remove("fa-chevron-down");
+        dropdownIcon.classList.add("fa-chevron-up");
+        setTimeout(() => dropdownContent.classList.add("show"), 10); // Pour forcer le recalcul de la mise en page
+    }
+}
+
 function toggleDropdown(contentId, iconId) {
     var dropdownContent = document.getElementById(contentId);
     var dropdownIcon = document.getElementById(iconId);
