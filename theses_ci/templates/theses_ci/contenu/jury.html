@@ -53,6 +53,39 @@
             .titre{
                 font-size: 32px;
             }
+
+            #myInput {
+        background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+        background-position: 10px 12px; /* Position the search icon */
+        background-repeat: no-repeat; /* Do not repeat the icon image */
+        width: 100%; /* Full-width */
+        font-size: 16px; /* Increase font-size */
+        padding: 12px 20px 12px 40px; /* Add some padding */
+        border: 1px solid #ddd; /* Add a grey border */
+        margin-bottom: 12px; /* Add some space below the input */
+        }
+
+        #myUL {
+        /* Remove default list styling */
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        z-index: 0;
+        max-height: 150px;
+        overflow-y: auto;
+        width: 100%;
+        position: absolute;
+        display: none;
+        background-color: #ddd;
+        }
+
+        #myUL li{
+            padding: 8px;
+            cursor: pointer;
+        }
+        #myUL li:hover:not(.header) {
+            background-color: #eee; /* Add a hover effect to all links, except for headers */
+        }
     </style>
 </head>
 <body>
@@ -92,13 +125,22 @@
                                 {{directeur.dr_email}}
                             </div>
                             <div class="col-md-4" class="dropdown">
-                                <label for="auteur_nom">Université</label>  
-                                <select class="form-select-sm w-100 universite_js" value="" name="dr_universite[]">
+                                <!-- <label for="auteur_nom">Université</label>  
+                                <select class="form-select-sm w-100 universite_js" value="" name="">
                                     <option value="">Université...</option>
                                     {% for universite in universites %}
                                         <option value="{{universite.id}}">{{universite}}</option>
                                     {% endfor %}
-                                </select>
+                                </select> -->
+
+                                <label for="searchInput">Université</label> 
+                                <input type="text" id="searchInput"  value="" name="dr_universite[]" class="form-control form-select-sm rounded-0" onkeyup="filterFunction('searchInput')" placeholder="Université ...">
+                                <ul id="myUL">
+                                    
+                                    {% for universite in universites %}
+                                        <li onclick="selectItem(this)">{{universite}}</li>
+                                    {% endfor %}
+                                </ul>
                                 
                             </div>
 
@@ -114,6 +156,7 @@
                         var form = document.getElementById('input-container-directeur');
                         var newLine = document.createElement('div');
                         newLine.classList.add('card', 'p-2', 'bg-light','mt-3', 'rounded-0');
+                        
                         newLine.innerHTML = `
                             <div class="">  
                                 <label for="auteur_nom">Nom et Prénom</label>
@@ -125,13 +168,14 @@
                                     {{directeur.dr_email}}
                                 </div>
                                 <div class="col-md-4">
-                                    <label for="auteur_nom">Université</label>  
-                                    <select class="form-control rounded-0 universite_js" name="dr_universite[]">
-                                        <option value="">Université...</option>
+                                    <label for="searchInput">Université</label> 
+                                    <input type="text" id="searchInput"  value="" name="dr_universite[]" class="form-control form-select-sm rounded-0" onkeyup="filterFunction('searchInput')" placeholder="Université ...">
+                                    <ul id="myUL">
+                                        
                                         {% for universite in universites %}
-                                        <option value="{{universite.id}}">{{universite}}</option>
+                                            <li onclick="selectItem(this)">{{universite}}</li>
                                         {% endfor %}
-                                    </select>
+                                    </ul>
                                 </div>
                                 <div class="d-flex container justify-content-end mt-1">
                                     <button class="delete-button bg-light" onclick="deleteLinejury(this)"><i class="fa-solid fa-trash"></i> Supprimer</button>
@@ -173,13 +217,14 @@
                                 {{membrejury.email}}
                             </div>
                             <div id="director-template" class="col-md-4 col-sm-4 ">
-                                <label for="auteur_nom">Université</label>  
-                                <select class="form-select-sm w-100 universite_js" value="" name="universite[]">
-                                    <option value="">Université...</option>
+                                <label for="searchInput">Université</label> 
+                                <input type="text" id="searchInput"  value="" name="dr_universite[]" class="form-control form-select-sm rounded-0" onkeyup="filterFunction('searchInput')" placeholder="Université ...">
+                                <ul id="myUL">
+                                    
                                     {% for universite in universites %}
-                                        <option value="{{universite.id}}">{{universite}}</option>
+                                        <li onclick="selectItem(this)">{{universite}}</li>
                                     {% endfor %}
-                                </select>
+                                </ul>
                             </div>
                             <div id="director-template" class="col-md-2 col-sm-4 ">
                                 <label for="auteur_nom">Role</label>  
@@ -212,13 +257,14 @@
                                     {{membrejury.email}}
                                 </div>
                                 <div class="col-md-4 col-sm-4">
-                                    <label for="auteur_nom">Université</label>  
-                                    <select class="form-select w-100 universite_js" value="" name="universite[]">
-                                        <option value="">Université...</option>
+                                    <label for="searchInput">Université</label> 
+                                    <input type="text" id="searchInput"  value="" name="dr_universite[]" class="form-control form-select-sm rounded-0" onkeyup="filterFunction('searchInput')" placeholder="Université ...">
+                                    <ul id="myUL">
+                                        
                                         {% for universite in universites %}
-                                            <option value="{{universite.id}}">{{universite}}</option>
+                                            <li onclick="selectItem(this)">{{universite}}</li>
                                         {% endfor %}
-                                    </select>
+                                    </ul>
                                 </div>
                                 <div class="col-md-2 col-sm-4">
                                     <label for="auteur_nom">Role</label>  
@@ -268,6 +314,43 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.min.js"></script>
     <script src="{% static 'theses_ci/js/bootstrap.min.js' %}"></script>
+
+    <script>
+        function filterFunction(id) {
+        const input = document.getElementById(id);
+        const filter = input.value.toLowerCase();
+        const ul = document.getElementById('myUL');
+        const li = ul.getElementsByTagName('li');
+    
+        ul.style.display = 'block'; // Show the list
+    
+        for (let i = 0; i < li.length; i++) {
+            const txtValue = li[i].textContent || li[i].innerText;
+            if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                li[i].style.display = '';
+            } else {
+                li[i].style.display = 'none';
+            }
+        }
+    
+        // Cacher la liste si aucun élément ne correspond à la saisie
+        if (filter === '') {
+            ul.style.display = 'none';
+        }
+    }
+    
+    function selectItem(element) {
+        const input = document.getElementById('searchInput');
+        input.value = element.textContent || element.innerText;
+        const ul = document.getElementById('myUL');
+        ul.style.display = 'none'; // Hide the list
+    }
+    
+    function hideDropdown() {
+        const ul = document.getElementById('myUL');
+        ul.style.display = 'none'; // Hide the list
+    }
+    </script>
     
     
     <script>

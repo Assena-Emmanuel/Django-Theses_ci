@@ -1,0 +1,96 @@
+<style>
+     #myInput {
+        background-image: url('/css/searchicon.png'); /* Add a search icon to input */
+        background-position: 10px 12px; /* Position the search icon */
+        background-repeat: no-repeat; /* Do not repeat the icon image */
+        width: 100%; /* Full-width */
+        font-size: 16px; /* Increase font-size */
+        padding: 12px 20px 12px 40px; /* Add some padding */
+        border: 1px solid #ddd; /* Add a grey border */
+        margin-bottom: 12px; /* Add some space below the input */
+        }
+
+        #myUL {
+        /* Remove default list styling */
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        z-index: 0;
+        max-height: 150px;
+        overflow-y: auto;
+        width: 100%;
+        position: absolute;
+        display: none;
+        background-color: #ddd;
+        }
+
+        #myUL li{
+            padding: 8px;
+            cursor: pointer;
+        }
+        #myUL li:hover:not(.header) {
+            background-color: #eee; /* Add a hover effect to all links, except for headers */
+        }
+</style>
+
+<form action="{% url 'theses_ci:resultat' %}" method="POST" class="d-flex justify-content-center">
+    {% csrf_token %}
+    <div class="card pb-3 pt-3 rounded-0 bg-light shadow-sm card_form ">
+        <div class="row container d-flex justify-content-center align-items-center w-100 ">
+            <div class="col-md-10 col-sm-10 col-10 dropdown ">
+                <input type="text" id="searchInput"  value="" name="mot_cle" class="form-control rounded-0" onkeyup="filterFunction()" placeholder="Rechercher des thèses">
+                <ul id="myUL">
+                    
+                    {% for d in mots_cles %}
+                    <li onclick="selectItem(this)">{{d}}</li>
+                    {% endfor %}
+                </ul>
+                
+
+            </div>
+            <div class="col-md-2 col-sm-2 col-2">
+                <button type="submit" class="btn btn-warning d-flex align-items-center justify-content-center">
+                    <span class="d-none d-md-inline">Recherche</span>
+                    <span class="d-inline d-md-none"><i class="fas fa-search fs-1"></i></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+    function filterFunction() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const ul = document.getElementById('myUL');
+    const li = ul.getElementsByTagName('li');
+
+    ul.style.display = 'block'; // Show the list
+
+    for (let i = 0; i < li.length; i++) {
+        const txtValue = li[i].textContent || li[i].innerText;
+        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+            li[i].style.display = '';
+        } else {
+            li[i].style.display = 'none';
+        }
+    }
+
+    // Cacher la liste si aucun élément ne correspond à la saisie
+    if (filter === '') {
+        ul.style.display = 'none';
+    }
+}
+
+function selectItem(element) {
+    const input = document.getElementById('searchInput');
+    input.value = element.textContent || element.innerText;
+    const ul = document.getElementById('myUL');
+    ul.style.display = 'none'; // Hide the list
+}
+
+function hideDropdown() {
+    const ul = document.getElementById('myUL');
+    ul.style.display = 'none'; // Hide the list
+}
+</script>

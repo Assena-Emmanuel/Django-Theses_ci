@@ -231,68 +231,6 @@
                     </div>
                 </div>
 
-                <!-- Filtres des Dates -->
-                <!-- <div class="dropdown_filtre">
-                    <button onclick="toggleDropdownDate('searchfiltre3', 'dropdownIcon3')" class="dropbtn">
-                        Date
-                        <i id="dropdownIcon3" class="fas fa-chevron-down"></i>
-                    </button>
-                    <div id="searchfiltre3" class="searchfiltre">
-                        <div class="d-flex justify-content-center gap-3" style="padding: 10px 10px;">
-                            <div class="w-100">
-                                <span>de</span>
-                                <input type="number" oninput="filterYearList()" onblur="hideDropdown()" placeholder="AAAA" id="datedebut" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance w-100">
-                            </div>
-                            <div class="w-100">
-                                <span>à</span>
-                                <input type="number" oninput="filterYearList()" placeholder="AAAA" id="datefin" min="{{date_min}}" max="{{date_max}}" class="form-control datesoutenance w-100">
-                            </div>
-                        </div>
-                        <div>
-                            <button type="button btn-primary">Rechercher</button>
-                        </div>
-                    
-                    </div>
-                    
-                </div> -->
-                
-                <!-- <script>
-                    function hideDropdown() {
-                        const div = document.getElementById('dropdownContent3');
-                        div.style.display = 'none'; 
-                    }
-                
-                    function toggleDropdownDate() {
-                        document.getElementById('dropdownContent3').classList.toggle('show');
-                    }
-                
-                    
-                
-                    function createYearList() {
-                        var yearList = document.getElementById('yearList');
-                        for (var year = 1900; year <= 2099; year++) {
-                            var yearItem = document.createElement('div');
-                            yearItem.textContent = year;
-                            yearItem.style.cursor = 'pointer';
-                            yearItem.addEventListener('click', function() {
-                                var yearInput = document.activeElement;
-                                if (yearInput.tagName === 'INPUT' && yearInput.classList.contains('datesoutenance')) {
-                                    yearInput.value = this.textContent;
-                                }
-                                document.getElementById('dropdownContent3').classList.remove('show');
-                            });
-                            yearList.appendChild(yearItem);
-                        }
-                    }
-                
-                    
-                
-                    
-                </script> -->
-                
-                
-                
-
                 {% endif %} 
 
 
@@ -430,13 +368,7 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="{% static 'theses_ci/js/resultat.js' %}"></script>
-<!-- <script> -->
-    <!-- Lorsque la sélection de la liste déroulante change -->
-    <!-- $('#perPage').change(function() {
-        // Soumettre automatiquement le formulaire
-        $('#perPageForm').submit();
-    }); -->
-<!-- </script> -->
+<script src="{% static 'theses_ci/js/htmx.min.js' %}"></script>
 
 
 </body>

@@ -12,4 +12,6 @@ urlpatterns = [
     path('ajoute_these/succes', views.succes, name='succes'),
     path('resultat/', views.resultat, name='resultat'),
     path('telecharger/', views.telecharger, name='telecharger'),
+    path('recherche-avancee/', views.recherche_avancee, name='recherche_avancee'),
+    path('recherche-simple/', views.recherche_simple, name='recherche_simple'),
 ]

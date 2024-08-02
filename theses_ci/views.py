@@ -1,10 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404, HttpResponse
 from .forms import ThesesForm , DirecteurForm, MembrejuryForm 
 from .models import Domaines, Specialites, Institutions, Theses, Directeurs, MembreJury
-from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Count
-from django.db.models.functions import ExtractYear
 from .utils import handle_uploaded_file
 import os
 from django.conf import settings
@@ -47,6 +45,13 @@ def index(request):
     return render(request, "theses_ci/contenu/index.html", context)
 
 
+def recherche_avancee(request):
+    print('____________________________________')
+    return render(request, 'theses_ci/contenu/recherche_avancee.html')
+
+def recherche_simple(request):
+    return render(request, 'theses_ci/contenu/recherche_simple.html')
+
 def resultat(request):
     context = {}
     etablissement = Institutions.objects.all()
@@ -56,15 +61,16 @@ def resultat(request):
     # Extraire les dates de soutenance
     dates = list(Theses.objects.values_list('date_soutenance', flat=True))
     
-    # Extraire les années des dates
-    annees = list(set([date.year for date in dates if date is not None]))
+    if (len(dates) != 0):
+        # Extraire les années des dates
+        annees = list(set([date.year for date in dates if date is not None]))
 
-    context["dates"] = range(min(annees), max(annees) + 1, 3)
-    context["date_min"] = min(annees)
-    context["date_max"] = max(annees)
-    context["specialites"] = specialites
-    context["domaines"] = domaines
-    context["etablissements"] = etablissement
+        context["dates"] = range(min(annees), max(annees) + 1, 3)
+        context["date_min"] = min(annees)
+        context["date_max"] = max(annees)
+        context["specialites"] = specialites
+        context["domaines"] = domaines
+        context["etablissements"] = etablissement
 
     # Récupérer tous les mots clés de la table Theses
     terme_recherche = []
@@ -72,18 +78,19 @@ def resultat(request):
     domaines = list(set(list(Domaines.objects.values_list('libelle', flat=True))))
     specialites = list(set(list(Specialites.objects.values_list('libelle', flat=True))))
 
-    # Découper tous les mots clés par la virgule
-    tous_mots_cles = []
-    for mc in mots_cles:
-        if mc:
-            tous_mots_cles.extend(mc.split(','))
-    mots_cles = list(set([mot.strip() for mot in tous_mots_cles]))
-    terme_recherche.extend(domaines)
-    terme_recherche.extend(specialites)
-    terme_recherche.extend(mots_cles)
+    if(len(mots_cles)!= 0):
+        # Découper tous les mots clés par la virgule
+        tous_mots_cles = []
+        for mc in mots_cles:
+            if mc:
+                tous_mots_cles.extend(mc.split(','))
+        mots_cles = list(set([mot.strip() for mot in tous_mots_cles]))
+        terme_recherche.extend(domaines)
+        terme_recherche.extend(specialites)
+        terme_recherche.extend(mots_cles)
 
-    # Enlever les éventuels espaces et nettoyer les mots clés
-    context["mots_cles"] = terme_recherche
+        # Enlever les éventuels espaces et nettoyer les mots clés
+        context["mots_cles"] = terme_recherche
 
     list_theses = []
     if request.method == 'GET':
@@ -141,7 +148,10 @@ def detail(request, these_id):
     directeurs = theses.directeur.all()
     jurys = theses.jury.all()
     mots_cles = theses.mot_cle.split(',')
-    fichier = '/'.join(theses.fichier.url.split('/')[-2:])
+    if theses.fichier:
+        fichier = '/'.join(theses.fichier.url.split('/')[-2:])
+    else:
+       fichier = None 
 
 
     return render(request, 'theses_ci/contenu/detail.html',{'theses':theses, 'directeurs':directeurs, 'jurys':jurys, 'mots_cles':mots_cles, 'fichier':fichier})
